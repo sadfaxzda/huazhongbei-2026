@@ -20,6 +20,9 @@ wheels/
 .installed.cfg
 *.egg
 
+# Conda
+.conda/
+
 # Virtual Environment
 venv/
 env/
@@ -40,7 +43,6 @@ ENV/
 Claude/
 claude/
 
-
 # OS
 .DS_Store
 Thumbs.db
@@ -49,16 +51,23 @@ Thumbs.db
 data/raw/*
 data/processed/*
 outputs/renders/*
-outputs/figures/*
+outputs/figures/draft/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
-!outputs/renders/.gitkeep
-!outputs/figures/.gitkeep
+!outputs/figures/final/.gitkeep
 # Keep competition-provided images
-!data/raw/图3.png
-!data/raw/图4.png
+!data/reference/图3.png
+!data/reference/图4.png
 
 # Environment variables
 .env
 .env.local
 
+# LaTeX
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.bbl
+*.blg
