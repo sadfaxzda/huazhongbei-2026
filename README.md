@@ -34,7 +34,7 @@ mathmodel/
 conda env create -f environment.yml
 
 # 激活环境
-conda activate mathmodel
+conda activate huazhongbei-b
 ```
 
 ## 分工
