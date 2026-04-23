@@ -9,15 +9,19 @@ mathmodel/
 │   ├── q2/                # Q2 双子问题实现
 │   └── q3/                # Q3 兼容性判据算法
 ├── data/                  # 数据目录
-│   ├── raw/              # 原始输入图像
+│   ├── raw/              # 原始输入图像（图3、图4）
 │   └── processed/        # 处理后的中间数据
 ├── outputs/               # 输出目录
 │   ├── figures/          # 论文用图
 │   └── renders/          # 渲染结果
 ├── notebooks/             # Jupyter notebooks 用于实验
 ├── docs/                  # 文档
+├── competition/           # 比赛官方文件
+│   ├── B题：反射的艺术.pdf
+│   ├── “华中杯”大学生数学建模挑战赛承诺书.pdf
+│   └── 作品提交说明.pdf
 ├── SOP.md                 # 作战计划
-├── requirements.txt       # Python 依赖
+├── environment.yml        # Conda 环境配置
 └── README.md              # 本文件
 ```
 
@@ -26,13 +30,11 @@ mathmodel/
 ### 环境配置
 
 ```bash
-# 创建虚拟环境
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-# 或 venv\Scripts\activate  # Windows
+# 创建 Conda 环境
+conda env create -f environment.yml
 
-# 安装依赖
-pip install -r requirements.txt
+# 激活环境
+conda activate mathmodel
 ```
 
 ## 分工

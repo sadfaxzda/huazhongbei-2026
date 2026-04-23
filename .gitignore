@@ -36,6 +36,11 @@ ENV/
 *.swo
 *~
 
+# Claude / AI assistant folders
+Claude/
+claude/
+
+
 # OS
 .DS_Store
 Thumbs.db
