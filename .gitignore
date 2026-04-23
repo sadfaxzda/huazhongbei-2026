@@ -49,6 +49,9 @@ outputs/figures/*
 !data/processed/.gitkeep
 !outputs/renders/.gitkeep
 !outputs/figures/.gitkeep
+# Keep competition-provided images
+!data/raw/图3.png
+!data/raw/图4.png
 
 # Environment variables
 .env
