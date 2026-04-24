@@ -84,22 +84,22 @@ $$
 
 该映射关于 $\theta=0$ 对称，在 $z < H_E$ 时光滑。
 
-## 2.2.3 基于纸面直角坐标 $(u,v)$ 的映射模型
+### 2.2.3 基于纸面直角坐标 $(u, v)$ 的映射模型
 
-纸面直角坐标 $(u,v)$ 以 A4 纸左下角为原点，是最终输出所必需的坐标系。
+纸面直角坐标 $(u, v)$ 以 A4 纸左下角为原点，是最终输出所需的坐标系。
 
-正向映射 $T:(u,v)\mapsto(\theta,z)$ 可通过求解以下非线性方程组获得：
+正向映射 $T: (u, v) \mapsto (\theta, z)$ 可通过求解以下非线性方程组获得：
 
 $$
 \begin{cases}
-(x_0+R\cos\theta-u)^2+(y_0+R\sin\theta-v)^2=R^2,\\[4pt]
-z+(\mathbf{E}_z-z)\dfrac{(\mathbf{E}_x-x_0-R\cos\theta)D_x+(\mathbf{E}_y-y_0-R\sin\theta)D_y}{(\mathbf{E}_x-x_0-R\cos\theta)^2+(\mathbf{E}_y-y_0-R\sin\theta)^2}=0,
+(x_0 + R \cos\theta - u)^2 + (y_0 + R \sin\theta - v)^2 = R^2, \\
+z + (E_z - z) \dfrac{(E_x - x_0 - R \cos\theta)D_x + (E_y - y_0 - R \sin\theta)D_y}{(E_x - x_0 - R \cos\theta)^2 + (E_y - y_0 - R \sin\theta)^2} = 0
 \end{cases}
 $$
 
-其中 $\mathbf{E}=(L,0,H_E)$ 为观察者位置，$D_x,D_y$ 为反射方向向量 $\mathbf{D}$ 的 $x,y$ 分量（隐含 $\theta$ 依赖）。
+其中 $E = (L, 0, H_E)$ 为观察者位置，$D_x, D_y$ 为反射方向向量 $D$ 的 $x, y$ 分量（隐含 $\theta$ 依赖）。
 
-逆向映射 $T^{-1}:(\theta,z)\mapsto(u,v)$ 则通过 2.2.1 节中的向量形式直接计算，得到 $(u,v)$ 后可方便地转换为像素坐标进行图像生成。
+逆向映射 $T^{-1}: (\theta, z) \mapsto (u, v)$ 则通过 2.2.1 节中的向量形式直接计算，得到 $(u, v)$ 后可方便地转换为像素坐标进行图像生成。
 
 ## 2.2.4 映射模型的数值实现框架
 
