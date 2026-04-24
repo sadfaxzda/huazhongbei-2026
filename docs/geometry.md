@@ -41,7 +41,7 @@ $$
 逆向映射（由镜面到纸面）是本文核心算子。从观察者 $E$ 出发，经镜面点 $P_{\text{mirror}}(\theta,z)$ 反射后与纸面 $z=0$ 相交于纸面点 $\mathbf{P}_{\mathrm{paper}}=(u(\theta,z),v(\theta,z),0)$。令单位视线向量
 
 $$
-\mathbf{V}=\frac{E-P_{\text{mirror}}}{\lVert E-P_{\text{mirror}}\rVert},
+\mathbf{V}=\frac{\mathbf{E}-P_{\text{mirror}}}{\lVert\mathbf{E}-P_{\text{mirror}}\rVert},
 $$
 
 根据反射定律，反射方向向量 $\mathbf{r}$ 满足：
@@ -87,14 +87,16 @@ $$
 正向映射可推导为显式形式。基于 Hunt et al.（2000）针对柱面镜提出的代数映射模型，定义中间系数（完整推导详见附录 A.1）：
 
 $$
-\alpha(z)=\frac{z_E-2z}{z_E-z},\qquad \beta(z)=\frac{z}{z_E-z},
+\alpha(z)=\frac{H_E-2z}{H_E-z},\qquad \beta(z)=\frac{z}{H_E-z},
 $$
 
 则纸面极坐标下的正向映射满足：
 
 $$
-\rho(\theta,z)=\sqrt{\alpha(z)^2 R^2+\beta(z)^2 D^2+2\alpha(z)\beta(z)RD\cos\theta},
+\rho(\theta,z)=\sqrt{\alpha(z)^2 R^2+\beta(z)^2 L^2+2\alpha(z)\beta(z)RL\cos\theta},
 $$
+
+其中中间直角坐标为：
 
 $$
 \phi(\theta,z)=\operatorname{atan2}\!\bigl(\alpha(z)R\sin\theta+\beta(z)D\sin 2\theta,\;\alpha(z)R\cos\theta+\beta(z)D\cos 2\theta\bigr).
@@ -104,18 +106,22 @@ $$
 
 <!-- TODO: 附录 A.1 完整推导 -->
 
-逆向映射 $T^{-1}$ 在极坐标下无简洁解析式，通常通过数值方法由 $(\rho,\phi)$ 反求 $(\theta,z)$。
+$$
+\phi(\theta, z) = \text{atan2}(y_P, x_P).
+$$
 
 ## 2.4.3 基于纸面直角坐标 $(u,v)$ 的映射模型
 
-纸面直角坐标 $(u,v)$ 以 A4 纸左下角为原点，是最终输出所必需的坐标系。
+### 2.2.3 基于纸面直角坐标 $(u, v)$ 的映射模型
 
-正向映射 $T:(u,v)\mapsto(\theta,z)$ 可通过求解以下非线性方程组获得：
+纸面直角坐标 $(u, v)$ 以 A4 纸左下角为原点，是最终输出所需的坐标系。
+
+正向映射 $T: (u, v) \mapsto (\theta, z)$ 可通过求解以下非线性方程组获得：
 
 $$
 \begin{cases}
-(x_0+R\cos\theta-u)^2+(y_0+R\sin\theta-v)^2=R^2,\\
-\text{反射定律约束条件}.
+(x_0 + R \cos\theta - u)^2 + (y_0 + R \sin\theta - v)^2 = R^2, \\
+z + (E_z - z) \dfrac{(E_x - x_0 - R \cos\theta)D_x + (E_y - y_0 - R \sin\theta)D_y}{(E_x - x_0 - R \cos\theta)^2 + (E_y - y_0 - R \sin\theta)^2} = 0
 \end{cases}
 $$
 
