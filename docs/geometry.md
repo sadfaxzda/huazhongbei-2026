@@ -97,7 +97,7 @@ z + (E_z - z) \dfrac{(E_x - x_0 - R \cos\theta)D_x + (E_y - y_0 - R \sin\theta)D
 \end{cases}
 $$
 
-其中 $E = (L, 0, H_E)$ 为观察者位置，$D_x, D_y$ 为反射方向向量 $D$ 的 $x, y$ 分量（隐含 $\theta$ 依赖）。
+其中 $E = (L, 0, H_E)$ 为观察者位置，$\text{atan2}(y_P, x_P)$ 为反射方向向量 $D$ 的 $x, y$ 分量（隐含 $\theta$ 依赖）。
 
 逆向映射 $T^{-1}: (\theta, z) \mapsto (u, v)$ 则通过 2.2.1 节中的向量形式直接计算，得到 $(u, v)$ 后可方便地转换为像素坐标进行图像生成。
 
