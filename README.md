@@ -37,6 +37,62 @@ mathmodel/
 ├── environment.yml        # Conda 环境配置
 └── README.md              # 本文件
 ```
+### 反射的艺术数学模型主要参数与变量（蒙娜丽莎方案）
+
+#### 1. 参数汇总表
+
+| 类别           | 符号                          | 物理意义                           | 推荐值 / 说明                                      |
+|----------------|-------------------------------|------------------------------------|----------------------------------------------------|
+| **纸张参数**   | $(x,y,0)$                     | 纸面直角坐标系                     | 原点取纸张左下角（$210\times297\,\text{mm}$）     |
+| **圆柱镜参数** | $r$                           | 圆柱镜半径                         | $32\,\text{mm}$                                    |
+|                | $(x_0, y_0)$                  | 圆柱轴心坐标                       | $(105, 92)\,\text{mm}$                             |
+|                | $H$                           | 圆柱有效高度                       | $165\,\text{mm}$                                   |
+|                | $\theta$                      | 方位角范围                         | $[-110^\circ, 110^\circ]$                          |
+|                | $h$                           | 高度坐标                           | $[8, 158]\,\text{mm}$                              |
+| **观察者参数** | $E=(e_x,e_y,e_z)$             | 观察者眼睛位置                     | $(105, -185, 355)\,\text{mm}$                      |
+|                | 关键假设                      | 视线默认经过镜面轴心               | $e_x = x_0$（对称面内）                            |
+| **映射变量**   | $\mathbf{N}(\theta)$          | 镜面单位外法向量                   | $(\cos\theta, \sin\theta, 0)^\top$                 |
+|                | $\mathbf{V}(\theta,h)$        | 从 $M$ 指向 $E$ 的单位视线向量     | $\dfrac{E-M}{\|E-M\|}$                             |
+|                | $\mathbf{D}(\theta,h)$        | 反射定律得到的入射方向向量         | $\mathbf{V}-2(\mathbf{V}\cdot\mathbf{N})\mathbf{N}$ |
+|                | $Q(x(\theta,h), y(\theta,h))$ | 纸面对应绘图点                     | $M + t \cdot \mathbf{D}$                           |
+| **离散化参数** | $N_\theta, N_h$               | $\theta$和高度方向采样点数         | $2400 \times 500$（建议 $2000\sim4000 \times 400\sim800$） |
+|                | 分辨率                        | 输出纸面图像分辨率                 | $200\,\text{dpi}$（约 $1654\times2339$ 像素）      |
+|                | 插值方法                      | 散点到规则像素网格的插值方式       | RBF / `griddata`（linear 或 cubic）                |
+
+#### 2. 镜面坐标到纸面坐标的映射关系
+
+$$
+\begin{align*}
+M(\theta,h) &= 
+\begin{pmatrix}
+x_0 + r \cos\theta \\
+y_0 + r \sin\theta \\
+h
+\end{pmatrix}, 
+&
+\mathbf{N}(\theta) &= 
+\begin{pmatrix}
+\cos\theta \\
+\sin\theta \\
+0
+\end{pmatrix}, \\[10pt]
+E &= 
+\begin{pmatrix}
+105 \\[4pt] -185 \\[4pt] 355
+\end{pmatrix}
+\quad (\text{mm}), 
+&
+\mathbf{V}(\theta,h) &= \frac{E - M(\theta,h)}{\|E-M(\theta,h)\|}, \\[10pt]
+\mathbf{D}(\theta,h) &= \mathbf{V}(\theta,h) - 2 \big( \mathbf{V}(\theta,h) \cdot \mathbf{N}(\theta) \big) \mathbf{N}(\theta), \\[8pt]
+t(\theta,h) &= -\frac{h}{D_z(\theta,h)}, \qquad (t>0 \text{ 且 } D_z < 0), \\[6pt]
+Q(\theta,h) &= M(\theta,h) + t(\theta,h) \cdot \mathbf{D}(\theta,h).
+\end{align*}
+$$
+
+**说明**：
+- $M(\theta,h)$ 为圆柱镜面上的采样点；
+- $Q(x(\theta,h), y(\theta,h))$ 为通过反射定律反向映射到纸面 $z=0$ 的对应绘图点；
+- 实际生成纸面图案时，对 $(\theta, h)$ 进行高密度离散采样后，通过插值得到规则像素图像。
 
 ## 快速开始
 
