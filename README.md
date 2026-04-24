@@ -24,10 +24,17 @@ mathmodel/
 │       └── draft/        # 草稿图（gitignore）
 ├── notebooks/             # Jupyter notebooks 用于实验
 ├── scripts/               # 一次性脚本
-├── docs/                  # 文档
-│   ├── symbols.md       # 符号表
-│   ├── geometry.md      # 反射几何推导
-│   └── references.md    # 文献列表
+├── docs/                      # 文档
+│   ├── symbols.md             # 全局符号表（v3）
+│   ├── geometry.md            # 2.4 节：反射几何映射模型推导
+│   ├── coordinate_choice.md   # 2.3 节：坐标系选择与对比
+│   ├── pixel grid.md          # 3.2–3.3 节：镜面参数化与像素网格
+│   ├── define R,H,Position.md # 3.5–3.6 节：圆柱参数确定算法
+│   ├── references.md          # 文献列表
+│   └── temp/                  # 论文工作目录
+│       ├── paper.tex          # LaTeX 主文件（整合所有数学内容）
+│       ├── paper.pdf          # 编译输出（预览用）
+│       └── paper-outline.md   # 论文大纲
 ├── comp/                  # 比赛官方文件
 │   ├── B题：反射的艺术.pdf
 │   ├── “华中杯”大学生数学建模挑战赛承诺书.pdf
