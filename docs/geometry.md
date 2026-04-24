@@ -1,125 +1,80 @@
-# 圆柱镜面反射的几何映射：正向与逆向模型
+### 2.2 圆柱镜面反射的几何映射模型
 
-## 1. 正向映射：镜面坐标到纸面极坐标
+为系统描述纸面图案与镜面图案之间的关系，本文建立正向映射 $T$ 与逆向映射 $T^{-1}$，并在不同坐标系下给出其数学表达。全局坐标系约定如下：
 
-光线遵循反射定律，沿路径 $E\to Q\to P$ 传播，其中 $P$ 为纸面上的反射像点。下面推导镜面点 $(\theta,z)$ 到纸面点极坐标 $(\rho,\phi)$ 的闭合表达式。
+- **3D 直角坐标系** $(x,y,z)$：用于光线追踪、反射定律推导和向量运算；
+- **镜面柱面参数坐标系** $(\theta,z)$：用于镜面离散化与镜面图案 $G(\theta,z)$ 的定义；
+- **纸面极坐标系** $(\rho,\phi)$：以圆柱轴心 $(x_0,y_0)$ 为极点，用于变形分析与对称性研究；
+- **纸面直角坐标系** $(u,v)$：以 A4 纸左下角为原点，用于最终图像生成与打印输出。
 
-### 1.1 反射向量计算
-
-入射光线方向向量（由观察者指向镜面）：
-
+主要符号遵循本文符号表：圆柱半径为 $R$，观察者位置为 $\mathbf{E}=(x_E,y_E,z_E)$，水平距离为 $D$，镜面高度参数为 $z$，纸面直角坐标为 $(u,v)$，纸面极坐标为 $(\rho,\phi)$。纸面图案记为 $F(u,v)$ 或 $F(\rho,\phi)$，镜面图案记为 $G(\theta,z)$。映射算子定义为：
 $$
-\mathbf{I}=Q-E = \big(R\cos\theta-L,\;R\sin\theta,\;z-H_e\big).
-$$
-
-镜面点法向量 $\mathbf{n}=(\cos\theta,\sin\theta,0)$，则入射向量与法向的点积为
-
-$$
-\mathbf{I}\cdot\mathbf{n} = (R\cos\theta-L)\cos\theta + R\sin^2\theta = R - L\cos\theta.
+T:(u,v)\mapsto(\theta,z),\qquad T^{-1}:(\theta,z)\mapsto(u,v).
 $$
 
-根据反射定律，反射方向 $\mathbf{r}$ 满足 $\mathbf{r} = \mathbf{I} - 2(\mathbf{I}\cdot\mathbf{n})\mathbf{n}$，代入得
+#### 2.2.1 基于镜面参数坐标 $(\theta,z)$ 的映射模型（核心）
 
+镜面上的点参数化为：
+$$
+P_{\text{mirror}}(\theta,z)=(x_0+R\cos\theta,\ y_0+R\sin\theta,\ z)
+$$
+单位外法向量为 $\mathbf{n}(\theta)=(\cos\theta,\sin\theta,0)$。
+
+**逆向映射**（由镜面到纸面）是本文核心算子。从观察者 $\mathbf{E}$ 出发，经镜面点 $P_{\text{mirror}}(\theta,z)$ 反射后与纸面 $z=0$ 相交于点 $Q(u(\theta,z),v(\theta,z))$。令单位视线向量 $\mathbf{V}=\frac{\mathbf{E}-P_{\text{mirror}}}{\|\mathbf{E}-P_{\text{mirror}}\|}$，根据反射定律，入射方向向量 $\mathbf{D}$ 满足：
+$$
+\mathbf{D}(\theta,z)=\mathbf{V}-2(\mathbf{V}\cdot\mathbf{n}(\theta))\mathbf{n}(\theta).
+$$
+参数方程 $P(t)=P_{\text{mirror}}+t\mathbf{D}$ 与平面 $z=0$ 求交，得：
+$$
+t(\theta,z)=-\frac{z}{D_z(\theta,z)},\quad(t>0,\ D_z<0).
+$$
+则逆向映射为：
+$$
+T^{-1}(\theta,z)=\big(u(\theta,z),\,v(\theta,z)\big)=P_{\text{mirror}}(\theta,z)+t(\theta,z)\cdot\mathbf{D}(\theta,z).
+$$
+纸面图案可由 $F\big(T^{-1}(\theta,z)\big)=G(\theta,z)$ 确定。
+
+**正向映射** $T$ 为上述过程的逆，可通过求解射线与圆柱面的交点实现。
+
+#### 2.2.2 基于纸面极坐标 $(\rho,\phi)$ 的映射模型
+
+以圆柱轴心 $(x_0,y_0)$ 为极点建立纸面极坐标 $(\rho,\phi)$，其中 $\phi=0$ 方向指向观察者投影方向。
+
+正向映射可推导为显式形式（对称放置假设下）。定义中间系数：
+$$
+\alpha(z)=\frac{z_E-2z}{z_E-z},\qquad\beta(z)=\frac{z}{z_E-z},
+$$
+则纸面极坐标下的正向映射满足：
 $$
 \begin{aligned}
-\mathbf{r} &= (R\cos\theta-L,\;R\sin\theta,\;z-H_e) - 2(R-L\cos\theta)(\cos\theta,\sin\theta,0) \\
-&= \big(L\cos2\theta - R\cos\theta,\;\; L\sin2\theta - R\sin\theta,\;\; z-H_e \big).
+\rho(\theta,z) &= \sqrt{\alpha(z)^2 R^2 + \beta(z)^2 D^2 + 2\alpha(z)\beta(z) R D \cos\theta}, \\
+\phi(\theta,z) &= \operatorname{atan2}(y_P,x_P).
 \end{aligned}
 $$
+其中 $(x_P,y_P)$ 为对应的直角坐标中间结果。该映射关于 $\theta=0$ 对称，在 $z<z_E$ 时光滑。
 
-此处应用了恒等式 $\cos2\theta=2\cos^2\theta-1$ 及 $\sin2\theta=2\sin\theta\cos\theta$。
+逆向映射 $T^{-1}$ 在极坐标下无简洁解析式，通常通过数值方法由 $(\rho,\phi)$ 反求 $(\theta,z)$。
 
-### 1.2 纸面交点坐标
+#### 2.2.3 基于纸面直角坐标 $(u,v)$ 的映射模型
 
-反射光线的参数方程为 $P(t)=Q + t\mathbf{r}$，$t>0$。令其 $z$ 分量为 $0$，解得
+纸面直角坐标 $(u,v)$ 以 A4 纸左下角为原点，是最终输出所必需的坐标系。
 
+正向映射 $T:(u,v)\mapsto(\theta,z)$ 可通过求解以下非线性方程组获得：
 $$
-t = \frac{z}{H_e-z}, \quad 0\le z < H_e.
+\begin{cases}
+(x_0+R\cos\theta-u)^2+(y_0+R\sin\theta-v)^2=R^2, \\
+\text{反射定律约束条件}.
+\end{cases}
 $$
+逆向映射 $T^{-1}:(\theta,z)\mapsto(u,v)$ 则通过 2.2.1 节中的向量形式直接计算，得到 $(u,v)$ 后可方便地转换为像素坐标进行图像生成。
 
-将 $t$ 代入 $x,y$ 分量，得到纸面交点的直角坐标：
+#### 2.2.4 映射模型的数值实现框架
 
-$$
-\begin{aligned}
-x_P &= R\cos\theta + \frac{z}{H_e-z}\big(L\cos2\theta - R\cos\theta\big),\\
-y_P &= R\sin\theta + \frac{z}{H_e-z}\big(L\sin2\theta - R\sin\theta\big).
-\end{aligned}
-$$
+由于逆向映射在解析形式上较为复杂，本文采用**离散正向投影+散点插值**的统一数值框架：
 
-### 1.3 极坐标形式
+1. 在镜面参数域 $(\theta,z)$ 上进行高密度均匀采样；
+2. 对每个采样点计算其在纸面坐标系 $(u,v)$ 或 $(\rho,\phi)$ 下的对应位置，形成带颜色的散点集；
+3. 使用径向基函数（RBF）或网格数据插值方法，将散点转换为规则的纸面图像 $F(u,v)$；
+4. 通过像素物理尺寸 $a$（由 DPI 确定）完成从物理坐标到离散像素矩阵 $(i,j)$ 的转换。
 
-引入仅依赖于高度的中间系数
-
-$$
-\alpha(z) = \frac{H_e-2z}{H_e-z},\qquad
-\beta(z) = \frac{z}{H_e-z},
-$$
-
-可将直角坐标整理为紧凑形式：
-
-$$
-\begin{aligned}
-x_P &= \alpha(z)\,R\cos\theta + \beta(z)\,L\cos2\theta,\\
-y_P &= \alpha(z)\,R\sin\theta + \beta(z)\,L\sin2\theta.
-\end{aligned}\tag{1}
-$$
-
-利用 $\cos\theta\cos2\theta + \sin\theta\sin2\theta = \cos\theta$，纸面点的极径平方为
-
-$$
-\rho^2 = x_P^2 + y_P^2 = \alpha^2 R^2 + \beta^2 L^2 + 2\alpha\beta R L\cos\theta.
-$$
-
-由此得到正向映射的显式表达式：
-
-$$
-\boxed{
-\begin{aligned}
-\rho(\theta,z) &= \sqrt{\alpha^2 R^2 + \beta^2 L^2 + 2\alpha\beta R L\cos\theta},\\[4pt]
-\phi(\theta,z) &= \operatorname{atan2}\big(y_P,\;x_P\big).
-\end{aligned}}
-\tag{2}
-$$
-
-式 $(2)$ 将柱面上任意可见点 $(\theta,z)$ 直接映射为纸面极坐标 $(\rho,\phi)$，且映射关于 $\theta=0$ 对称、在 $z<H_e$ 时处处光滑。
-
----
-
-## 2. 逆映射：由纸面坐标反求镜面坐标
-
-在实际设计中，更常见的需求是逆向映射：给定一幅期望在镜面中呈现的图案 $I_{\text{target}}(\theta,z)$，需要确定纸面上每一点 $(\rho,\phi)$ 所对应的颜色。这相当于求正向映射 $\mathcal{F}:(\theta,z)\mapsto(\rho,\phi)$ 的逆 $\mathcal{F}^{-1}$。
-
-### 2.1 逆映射的存在性与求解策略
-
-正向映射 $\mathcal{F}$ 在可见区域内是光滑单射，故其在数学上存在逆映射。但由于表达式 $(2)$ 包含三角函数的复杂耦合，难以导出显式解析解。因此，采用基于离散前向投影的数值方法。
-
-### 2.2 数值逆映射算法
-
-**输入**：目标镜面图案 $I_{\text{target}}(\theta,z)$，定义域 $\Omega\subset[-\theta_{\max},\theta_{\max}]\times[z_{\min},z_{\max}]$，以及几何参数 $R,L,H_e$。  
-**输出**：纸面图像 $I_{\text{paper}}(\rho,\phi)$。
-
-**步骤**：
-
-1. **构建前向映射表**  
-   在 $\Omega$ 内构造规则采样网格 $\{(\theta_i,z_j)\}$，利用式 $(2)$ 计算每一样本对应的纸面极坐标 $(\rho_{ij},\phi_{ij})$，存储三元组 $(\rho_{ij},\phi_{ij},\theta_i,z_j)$。
-
-2. **纸面区域离散化**  
-   根据 $(\rho_{ij},\phi_{ij})$ 的范围确定纸面输出图像的有效区域，并划分像素网格，各像素中心记为 $(\rho_p,\phi_q)$。
-
-3. **散乱数据插值反求**  
-   对于每一像素中心 $(\rho_p,\phi_q)$：
-   - 在以 $(\rho_{ij},\phi_{ij})$ 为顶点的点集中进行二维 Delaunay 三角剖分或使用 KD‑树加速搜索；
-   - 定位包含 $(\rho_p,\phi_q)$ 的三角形，利用重心坐标插值得到对应的 $(\theta,z)$；
-   - 若点位于映射表凸包之外，则标记为背景或裁剪。
-
-4. **颜色赋值**  
-   由插值获得的 $(\theta,z)$ 读取目标镜面图案颜色：
-   $$
-   I_{\text{paper}}(\rho_p,\phi_q) = I_{\text{target}}(\theta,z).
-   $$
-   当 $(\theta,z)$ 超出定义域时，该像素置为透明或预先定义的底色。
-
-5. **像素坐标转换（输出）**  
-   将极坐标 $(\rho,\phi)$ 转换为纸面直角坐标 $(x,y)$，并输出标准光栅图像。
-
-该算法的精度取决于前向映射网格的分辨率。由于映射光滑、无奇点，双线性或重心插值即可获得视觉上令人满意的结果，能够满足反射艺术品制作的要求。
+该几何映射模型在四套坐标系下相互补充，共同构成了后续模型建立与计算的基础。
