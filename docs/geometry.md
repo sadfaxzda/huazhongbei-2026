@@ -78,13 +78,11 @@ $$
 
 于是
 
-
 $$
-\phi(\theta,z)=\operatorname{atan2}\!\bigl(y_P,\;x_P\bigr).
+\phi(\theta, z) = \text{atan2}(y_P, x_P).
 $$
 
-
-该映射关于 $\theta=0$ 对称，在 $z<H_E$ 时光滑。逆向映射 $T^{-1}$ 在极坐标下无简洁解析式，通常通过数值方法由 $(\rho,\phi)$ 反求 $(\theta,z)$。
+该映射关于 $\theta=0$ 对称，在 $z < H_E$ 时光滑。
 
 ## 2.2.3 基于纸面直角坐标 $(u,v)$ 的映射模型
 
