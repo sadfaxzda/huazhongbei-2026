@@ -68,7 +68,7 @@ $$
 $$
 
 $$
-\phi(\theta,z)=\operatorname{atan2}(y_P,x_P).
+\phi(\theta, z) = \text{atan2}(y_P, x_P).
 $$
 
 其中 $(x_P,y_P)$ 为对应的直角坐标中间结果。该映射关于 $\theta=0$ 对称，在 $z<z_E$ 时光滑。
