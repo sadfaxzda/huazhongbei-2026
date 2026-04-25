@@ -8,7 +8,7 @@ function generate_monalisa_perfect_layout()
     img = im2double(img);
     
     % 2. 映射计算
-    m = 180; n = 110;
+    m = 600; n = 400;
     z_l = linspace(z_max, z_min, m);
     theta_k = linspace(-theta_max/2, theta_max/2, n);
     [THETA, Z] = meshgrid(theta_k, z_l);

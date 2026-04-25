@@ -1,14 +1,17 @@
 function generate_cat_perfect_layout()
-    % 1. 以圆心为原点的小猫专属参数 (120度张角)
+    % 注：角跨度从 120° 调整为 90°，使其落入角度放大效应（φ≈2θ）的线性适用范围
+    % 详见论文 3.6 节
+
+    % 1. 以圆心为原点的小猫专属参数
     R = 3.5; D = 25.0; zE = 35.0;
-    z_min = 0.2; z_max = 9.0; % 紧贴底面起步
-    theta_max = 2 * pi / 3;   % 120度大张角
-    
+    z_min = 0.2; z_max = 9.0;
+    theta_max = pi / 2;        % 90度张角（角度放大效应适用范围内）
+
     img = imread('cat.jpg');
     img = im2double(img);
-    
+
     % 2. 映射计算
-    m = 120; n = 150;
+    m = 400; n = 300;
     z_l = linspace(z_max, z_min, m);
     theta_k = linspace(-theta_max/2, theta_max/2, n);
     [THETA, Z] = meshgrid(theta_k, z_l);
@@ -31,7 +34,7 @@ function generate_cat_perfect_layout()
     y_paper = rho .* cos(phi);
     
     % 3. 生成 A4 横向画布 (X:[-14.85, 14.85], Y:[16.0, -5.0])
-    disp('正在执行 120° 极限平滑插值...');
+    disp('正在执行 90° 平滑插值（角度放大效应适用范围内）...');
     [grid_x, grid_y] = meshgrid(linspace(-14.85, 14.85, 2970), linspace(16.0, -5.0, 2100));
     
     grid_colors = ones(2100, 2970, 3);
@@ -86,5 +89,5 @@ function generate_cat_perfect_layout()
     
     print(f, 'output_cat_perfect_matlab.jpg', '-djpeg', '-r300');
     close(f);
-    disp('成功！已生成完美排版的横版小猫图纸！');
+    disp('成功！已生成 90° 张角小猫图纸（应呈漂亮半环）！');
 end

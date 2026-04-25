@@ -1,8 +1,11 @@
 function render_3D_cat_system()
+    % 注：角跨度从 120° 调整为 90°，使其落入角度放大效应（φ≈2θ）的线性适用范围
+    % 详见论文 3.6 节
+
     % 1. 小猫专属物理参数
     R = 3.5; D = 25.0; zE = 35.0; H = 15.0;
-    z_min = 0.2; z_max = 9.0; % 图像高度范围
-    theta_max = 2 * pi / 3;   % 120度大张角
+    z_min = 0.2; z_max = 9.0;
+    theta_max = pi / 2;        % 90度张角（角度放大效应适用范围内）
     
     figure('Color', 'white', 'Position', [100, 100, 1000, 800]);
     hold on; grid on; view(3);
@@ -36,8 +39,8 @@ function render_3D_cat_system()
     plot3(eye_x, eye_y, 0, 'rx', 'MarkerSize', 10);
     text(eye_x, eye_y + 1, 0, sprintf('Observer D=%.1fcm', D), 'Color', 'r');
     
-    % 5. 追踪同侧反射光线 (小猫 120°)
-    thetas = linspace(-theta_max/2, theta_max/2, 9); % 采样 9 条线以表现 120° 的宽度
+    % 5. 追踪同侧反射光线 (小猫 90°)
+    thetas = linspace(-theta_max/2, theta_max/2, 9); % 采样 9 条线以表现 90° 的扇面
     mz = 6.0; % 采样高度
     
     for i = 1:length(thetas)
@@ -70,7 +73,7 @@ function render_3D_cat_system()
     xlabel('X Width (cm)', 'FontWeight', 'bold');
     ylabel('Y Depth (cm)', 'FontWeight', 'bold');
     zlabel('Z Height (cm)', 'FontWeight', 'bold');
-    title('Physically Accurate 3D Trace for Cat (120° Angle)', 'FontSize', 16);
+    title('Physically Accurate 3D Trace for Cat (90° Angle, φ≈2θ Valid Range)', 'FontSize', 16);
     
     legend([h1, h2], {'Incident Ray (from Eye)', 'Reflected Ray (to Paper)'}, 'Location', 'northeast');
     
