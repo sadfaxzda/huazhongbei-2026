@@ -37,6 +37,7 @@ P = P^* \\
 
 通过这种转化，原本互斥的两个目标被纳入统一的优化框架，从而在数学上量化了“艺术加工”的边界：当且仅当存在 $P$ 使得 $J(P)$ 小于视觉感知的最小可察觉差异（JND）时，该设计方案被判定为可行。
 
+### 下面是5.1 公式图（算子映射示意图）在output里放入代码和图片
 
 ## 5.2对于5.1而言是用来干什么的（这个部分是写5.1到5.2的联系的，不一定要写或者全写在论文里面）
 
@@ -91,6 +92,8 @@ D(P, Q) = \gamma \cdot \text{MSE}(P, Q) + (1 - \gamma) \cdot (1 - \text{SSIM}(P,
     基于柱坐标系解析，纸面极坐标 $( \rho, \phi )$ 的变化与镜面直角坐标 $( \theta, z )$ 的变化高度耦合 [cite: 72]。纸面的放射状/同心圆图案对应镜面的竖/横条纹 [cite: 113]。令 $\mathcal{F}_{polar}(P^*)$ 为纸面目标的极坐标二维傅里叶变换，$\mathcal{F}_{cart}(M^*)$ 为镜面目标的直角坐标傅里叶变换。两者的主频分布相关系数必须满足 $Corr(\mathcal{F}_{polar}, \mathcal{F}_{cart}) \ge \epsilon_{freq}$。
 * **判据四：拓扑同胚与连通分量 (Topological Homomorphism)**
     令 $\chi$ 为图像显著二值化特征的欧拉示性数。在允许的艺术加工范围内，$P^*$ 与 $\mathcal{T}^{-1}(M^*)$ 之间的连通域拓扑差异必须具有上界限制：$|\chi(P^*) - \chi(\mathcal{T}^{-1}(M^*))| \le \epsilon_{topo}$。
+
+**此处添加频域对称性代码计算代码**
 
 ### 5.2.3 容忍度评价函数：双目标混合度量
 * **判据五：视觉保真度阈值 (Visual Tolerance Threshold)**
@@ -167,6 +170,10 @@ f_{\max}(z) \le \frac{1}{2\sigma(z)} \quad (\text{奈奎斯特条件}).
 
 ## [cite_start]5.3 构造性判决算法：基于双目标优化的迭代求解 [cite: 16, 29]
 
+### 5.3写什么的（不建议此部分不加到论文中）
+
+5.3 部分的功能定位与修改建议它是写什么的？数学落地：将 5.1 的优化目标 $\min J(P)$ 转化为计算机能够迭代求解的数学过程。逻辑闭环：通过算法运行出的“最终得分”，给出一个“可行”或“不可行”的判决结果。修改建议：名称调整：建议将标题改为“构造性判决算法：基于双目标优化的迭代求解”，以呼应题目要求。流程整合：将 5.2 中的“硬约束检查”作为算法的“第一步（预筛选）”，将 5.1 的“双目标函数”作为算法的“核心引擎”。流程图必要性：非常有必要。数模评委通常会先看模型公式，再看算法流程图。一个清晰的流程图能瞬间展现你逻辑的严密性。作为5.45.5的算法
+
 ### 5.3.1 算法逻辑流程
 
 [cite_start]本算法旨在通过数值迭代寻找纸面图案的最优近似解，并以此作为判断系统兼容性的最终依据 [cite: 34, 35]。
@@ -205,6 +212,50 @@ graph TD
     L -- 是 --> N[输出: 兼容设计方案及渲染效果图]
 ```
 
+### 2. 5.3.2 部分流程图创作代码 (Mermaid 格式)(第二种图，看看选哪个）
+
+如果您需要在其他支持 Mermaid 的编辑器（如 Typora, Obsidian, Notion）或通过 `mermaid.live` 独立生成该图片，可以直接使用以下代码：
+
+```mermaid
+graph TD
+    %% 样式定义
+    classDef start_end fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef process fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef decision fill:#ffb,stroke:#333,stroke-width:1px;
+
+    %% 流程步骤
+    Start([开始]) --> Input[输入双目标图 P* 和 M*]
+    Input --> PreCheck{5.2 节硬约束与频域预检}
+    
+    PreCheck -- 失败 --> Fail1[输出: 几何互斥, 不兼容]
+    Fail1 --> End([结束])
+    
+    PreCheck -- 通过 --> Init[初始化纸面图案 P0 = P*]
+    Init --> LoopStart[正向投影计算镜面估计: T_Pk]
+    LoopStart --> Resid[计算镜面残差: RM = M* - T_Pk]
+    Resid --> InvCorr[残差逆映射修正: T-1_RM]
+    InvCorr --> Mask[应用空间掩码 K 与边缘融合]
+    Mask --> Update[更新纸面图案 P_k+1]
+    
+    Update --> Converge{是否收敛?}
+    Converge -- 否 --> LoopStart
+    
+    Converge -- 是 --> Score[计算综合相似度得分 S_comp]
+    Score --> Threshold{S_comp >= 阈值?}
+    
+    Threshold -- 否 --> Fail2[输出: 冲突过大, 判为不兼容]
+    Threshold -- 是 --> Success[输出: 兼容设计方案及渲染效果图]
+    
+    Fail2 --> End
+    Success --> End
+
+    %% 应用样式
+    class Start,End start_end;
+    class Input,Init,LoopStart,Resid,InvCorr,Mask,Update,Score,Success,Fail1,Fail2 process;
+    class PreCheck,Converge,Threshold decision;
+
+```
+
 ### 5.3.3 算法参数设定（专门对于5.3核心参数的代码表，看看放在这里还是前面的代码表里面）
 
 为了保证优化过程的稳定性和视觉效果的科学性，本模型在求解过程中涉及的核心算法参数如下表所示。
@@ -216,3 +267,6 @@ graph TD
 | $\epsilon_{\text{freq}}$ | 频域预检阈值 | $0.55 \sim 0.65$ | 基于案例分析得出的几何兼容性下限 |
 | $S_{\text{threshold}}$ | 最终判决阈值 | $0.80 \sim 0.85$ | 对应人眼对结构相似性（SSIM）的公认感知界限 |
 | $\sigma$ | 羽化半径 | $3 \sim 5$ px | 消除掩码边缘视觉接缝的物理带宽 |
+
+
+## 实例化部分，即5.4和5.5
