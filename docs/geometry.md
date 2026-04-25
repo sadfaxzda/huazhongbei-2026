@@ -38,16 +38,16 @@ $$
 
 单位外法向量为 $\mathbf{n}(\theta)=(\cos\theta,\sin\theta,0)$。
 
-逆向映射（由镜面到纸面）是本文核心算子。从观察者 $E$ 出发，经镜面点 $P_{\text{mirror}}(\theta,z)$ 反射后与纸面 $z=0$ 相交于纸面点 $\mathbf{P}_{\mathrm{paper}}=(u(\theta,z),v(\theta,z),0)$。令单位视线向量
+逆向映射（由镜面到纸面）是本文核心算子。从观察者 $\mathbf{E}$ 出发，经镜面点 $P_{\text{mirror}}(\theta,z)$ 反射后与纸面 $z=0$ 相交于纸面点 $\mathbf{P}_{\mathrm{paper}}=(u(\theta,z),v(\theta,z),0)$。令入射视线单位向量
 
 $$
-\mathbf{V}=\frac{\mathbf{E}-P_{\text{mirror}}}{\lVert\mathbf{E}-P_{\text{mirror}}\rVert},
+\mathbf{d}=\frac{P_{\text{mirror}}-\mathbf{E}}{\lVert P_{\text{mirror}}-\mathbf{E}\rVert},
 $$
 
 根据反射定律，反射方向向量 $\mathbf{r}$ 满足：
 
 $$
-\mathbf{r}(\theta,z)=\mathbf{V}-2(\mathbf{V}\cdot\mathbf{n}(\theta))\,\mathbf{n}(\theta).
+\mathbf{r}(\theta,z)=\mathbf{d}-2(\mathbf{d}\cdot\mathbf{n}(\theta))\,\mathbf{n}(\theta).
 $$
 
 参数方程 $P(t)=P_{\text{mirror}}+t\mathbf{r}$ 与平面 $z=0$ 求交，得：
@@ -67,7 +67,7 @@ $$
 **可见性约束**：上述逆向映射仅对可见镜面点有效，需同时满足以下两个条件：
 
 $$
-\mathbf{V}\cdot\mathbf{n}(\theta)<0 \quad\text{（法向背向观察者，镜面正面朝外可见）}
+\mathbf{d}\cdot\mathbf{n}(\theta)<0 \quad\text{（法向朝向观察者一侧，镜面点可见）}
 $$
 
 $$
@@ -80,20 +80,20 @@ $$
 
 ## 2.4.2 基于纸面极坐标 $(\rho,\phi)$ 的映射模型
 
-**对称放置假设**：本节及后续推导中，约定观察者位于 $x$ 正半轴方向，即 $E=(D,0,z_E)$，圆柱轴心在坐标原点附近，$\phi=0$ 方向指向观察者投影方向。
+**对称放置假设**：本节及后续推导中，约定观察者位于 $x$ 正半轴方向，即 $\mathbf{E}=(D,0,z_E)$，圆柱轴心在坐标原点附近，$\phi=0$ 方向指向观察者投影方向。
 
 以圆柱轴心 $(x_0,y_0)$ 为极点建立纸面极坐标 $(\rho,\phi)$。
 
-正向映射可推导为显式形式。基于 Hunt et al.（2000）针对柱面镜提出的代数映射模型，定义中间系数（完整推导详见附录 A.1）：
+镜面参数到纸面极坐标的投影公式可推导为显式形式。基于 Hunt et al.（2000）针对柱面镜提出的代数映射模型，定义中间系数：
 
 $$
-\alpha(z)=\frac{H_E-2z}{H_E-z},\qquad \beta(z)=\frac{z}{H_E-z},
+\alpha(z)=\frac{z_E-2z}{z_E-z},\qquad \beta(z)=\frac{z}{z_E-z},
 $$
 
 则纸面极坐标下的正向映射满足：
 
 $$
-\rho(\theta,z)=\sqrt{\alpha(z)^2 R^2+\beta(z)^2 L^2+2\alpha(z)\beta(z)RL\cos\theta},
+\rho(\theta,z)=\sqrt{\alpha(z)^2 R^2+\beta(z)^2 D^2+2\alpha(z)\beta(z)RD\cos\theta},
 $$
 
 其中中间直角坐标为：
@@ -102,28 +102,22 @@ $$
 \phi(\theta,z)=\operatorname{atan2}\!\bigl(\alpha(z)R\sin\theta+\beta(z)D\sin 2\theta,\;\alpha(z)R\cos\theta+\beta(z)D\cos 2\theta\bigr).
 $$
 
-该映射关于 $\theta=0$ 对称，在 $z<z_E$ 时光滑。
-
-<!-- TODO: 附录 A.1 完整推导 -->
-
-$$
-\phi(\theta, z) = \text{atan2}(y_P, x_P).
-$$
+该投影公式关于 $\theta=0$ 对称，在 $z<z_E$ 时光滑。
 
 ## 2.4.3 基于纸面直角坐标 $(u,v)$ 的映射模型
 
-### 2.2.3 基于纸面直角坐标 $(u, v)$ 的映射模型
-
 纸面直角坐标 $(u, v)$ 以 A4 纸左下角为原点，是最终输出所需的坐标系。
 
-正向映射 $T: (u, v) \mapsto (\theta, z)$ 可通过求解以下非线性方程组获得：
+正向映射 $T: (u, v) \mapsto (\theta, z)$ 可通过数值求解以下非线性方程组获得：
 
 $$
 \begin{cases}
-(x_0 + R \cos\theta - u)^2 + (y_0 + R \sin\theta - v)^2 = R^2, \\
-z + (E_z - z) \dfrac{(E_x - x_0 - R \cos\theta)D_x + (E_y - y_0 - R \sin\theta)D_y}{(E_x - x_0 - R \cos\theta)^2 + (E_y - y_0 - R \sin\theta)^2} = 0
+u(\theta,z)-u=0,\\
+v(\theta,z)-v=0,
 \end{cases}
 $$
+
+其中 $u(\theta,z),v(\theta,z)$ 由 2.4.1 节的向量反射公式给出。实际计算中通常直接密集采样 $(\theta,z)$ 并建立散点插值表，而不显式求闭式反函数。
 
 逆向映射 $T^{-1}:(\theta,z)\mapsto(u,v)$ 则通过 2.4.1 节中的向量形式直接计算，得到 $(u,v)$ 后可方便地转换为像素坐标进行图像生成。
 

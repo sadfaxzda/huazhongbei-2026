@@ -1,8 +1,8 @@
 function generate_monalisa_perfect_layout()
-    % 1. 以圆心为原点的参数
-    R = 3.5; D = 25.0; zE = 35.0;
-    z_min = 0.2; z_max = 12.0; % 紧贴底面起步
-    theta_max = pi / 2;
+    % 1. 以圆心为原点的参数（单位：mm）
+    R = 35; D = 250; zE = 350;
+    z_min = 2; z_max = 120; % 紧贴底面起步
+    theta_max = 13 * pi / 18;  % 130度张角
     
     img = imread('/Users/zhangchunhe/Desktop/mathmodel/data/reference/图3.png');
     img = im2double(img);
@@ -30,9 +30,9 @@ function generate_monalisa_perfect_layout()
     x_paper = rho .* sin(phi);
     y_paper = rho .* cos(phi);
     
-    % 3. 生成 A4 横向画布 (X:[-14.85, 14.85], Y:[16.0, -5.0])
+    % 3. 生成 A4 横向画布 (X:[-148.5, 148.5], Y:[160, -50])，单位：mm
     disp('正在执行极致铺开插值...');
-    [grid_x, grid_y] = meshgrid(linspace(-14.85, 14.85, 2970), linspace(16.0, -5.0, 2100));
+    [grid_x, grid_y] = meshgrid(linspace(-148.5, 148.5, 2970), linspace(160, -50, 2100));
     
     grid_colors = ones(2100, 2970, 3);
     F_R = scatteredInterpolant(x_paper, y_paper, R_chan, 'natural', 'none');
@@ -49,6 +49,7 @@ function generate_monalisa_perfect_layout()
     grid_colors(repmat(cylinder_mask, [1, 1, 3])) = 1; 
     
     final_img = uint8(grid_colors * 255);
+    imwrite(final_img, '/Users/zhangchunhe/Desktop/mathmodel/outputs/figures/draft/p3_2D_clean.png');
     
     % 5. 绘图与强制锁定横版比例
     f = figure('Visible', 'off');
@@ -57,10 +58,10 @@ function generate_monalisa_perfect_layout()
     imshow(final_img, 'Parent', ax);
     hold on;
     
-    % 标尺坐标 (1cm = 100像素)
+    % 标尺坐标 (1mm = 10像素)
     px_x = 1485; 
     px_y = 1600; 
-    r_px = R * 100;
+    r_px = R * 10;
     
     % 画轴与圆
     plot([1, 2970], [px_y, px_y], 'Color', [0.4 0.4 0.4], 'LineWidth', 2);
@@ -70,7 +71,7 @@ function generate_monalisa_perfect_layout()
     plot(px_x + r_px*cos(theta_c), px_y + r_px*sin(theta_c), 'k', 'LineWidth', 4);
     plot(px_x, px_y, 'r+', 'MarkerSize', 15, 'LineWidth', 3);
     
-    text(px_x + 50, px_y - 60, sprintf('Origin O(0,0)\nR=%.1fcm', R), 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold');
+    text(px_x + 50, px_y - 60, sprintf('Origin O(0,0)\nR=%.0fmm', R), 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold');
     
     print(f, '/Users/zhangchunhe/Desktop/mathmodel/outputs/figures/draft/p3_2D_matlab.jpg', '-djpeg', '-r300');
     close(f);

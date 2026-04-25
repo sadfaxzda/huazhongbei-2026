@@ -117,7 +117,7 @@
 \textbf{符号} & \textbf{含义} & \textbf{单位} & \textbf{备注} \\
 \midrule
 $R$ & 圆柱镜面半径 & mm & 典型值 20–50 \\
-$H$ & 圆柱镜面高度 & mm & 典型值 60–120 \\
+$H$ & 圆柱镜面高度 & mm & 典型值 90–150 \\
 $(x_0, y_0)$ & 圆柱底面中心在纸面上的投影坐标 & mm & 默认 $(0, 0)$ \\
 $L_{A4}$ & A4 纸张长边 & mm & $L_{A4} = 297$ \\
 $W_{A4}$ & A4 纸张短边 & mm & $W_{A4} = 210$ \\
@@ -132,9 +132,9 @@ $W_{A4}$ & A4 纸张短边 & mm & $W_{A4} = 210$ \\
 \toprule
 \textbf{符号} & \textbf{含义} & \textbf{单位} & \textbf{备注} \\
 \midrule
-$\mathbf{E} = (D, 0, z_E)$ & 观察者视点 3D 位置（对称放置） & mm & 单点视点假设 \\
-$D$ & 观察者到圆柱轴（$z$ 轴）的水平距离 & mm & 对称放置下 $D = x_E$，标量 \\
-$z_E$ & 观察者视点高度 & mm & $z_E > 0$，通常取 $150\text{--}250$ mm \\
+$\mathbf{E} = (0, D, z_E)$ & 观察者视点 3D 位置（MATLAB 坐标约定） & mm & 单点视点假设 \\
+$D$ & 观察者到圆柱轴（$z$ 轴）的水平距离 & mm & 对称放置下 $D = y_E$，标量 \\
+$z_E$ & 观察者视点高度 & mm & $z_E > 0$，本文取 $350$ mm \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -150,8 +150,8 @@ $\theta$ & 镜面上点的方位角 & rad & $\theta \in [0, 2\pi)$ \\
 $z$ & 镜面上点的高度 & mm & $z \in [z_{\min}, z_{\max}] \subseteq [0, H]$ \\
 $z_{\min}, z_{\max}$ & 镜面图像垂直方向的高度区间 & mm & $z_{\max} - z_{\min} \leq H$ \\
 $[\theta_1, \theta_2]$ & 镜面图像所占的方位角区间 & rad & 通常取对称区间 \\
-$\mathbf{P}_{mirror}$ & 镜面上点的 3D 直角坐标 & mm & $x = x_0 + R\cos\theta,$ \newline $y = y_0 + R\sin\theta$ \\
-$\mathbf{n}$ & 镜面点处的外法向量 & — & $\mathbf{n} = (\cos\theta, \sin\theta, 0)$ \\
+$\mathbf{P}_{mirror}$ & 镜面上点的 3D 直角坐标 & mm & $x = x_0 + R\sin\theta,$ \newline $y = y_0 + R\cos\theta$ \\
+$\mathbf{n}$ & 镜面点处的外法向量 & — & $\mathbf{n} = (\sin\theta, \cos\theta, 0)$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -233,19 +233,6 @@ $\mathcal{F}_{cart}(G)$ & 镜面图案的 2D FFT & 横频谱 + 纵频谱 \\
 \end{tabular}
 \end{table}
 
-\subsubsection*{使用说明}
-\begin{enumerate}
-    \item 符号表内部不写公式推导,只定义符号。公式推导放在 2.4 节。
-    \item 全文必须严格遵守本表
-    \item 书写规范:
-    \begin{itemize}
-        \item 向量加粗:$\mathbf{E}, \mathbf{n}, \mathbf{d}, \mathbf{r}, \mathbf{P}$
-        \item 标量不加粗:$R, H, \theta, z$ 等
-        \item 下标与主变量用同一字母时,用小写下标区分:$x_E$ 表示 $\mathbf{E}$ 的 x 分量
-        \item 映射与算子用大写字母:$T, T^{-1}, F, G$
-    \end{itemize}
-\end{enumerate}
-
 \subsection{坐标系选择与对比}
 
 \subsubsection{四套坐标系的功能分层}
@@ -256,7 +243,7 @@ $\mathcal{F}_{cart}(G)$ & 镜面图案的 2D FFT & 横频谱 + 纵频谱 \\
 
 若以 3D 直角坐标 $(x,y,z)$ 描述镜面上的点，则每个点须满足隐式约束 $x^2+y^2=R^2$，三个坐标分量之间存在非线性耦合，采样与插值操作均需额外处理。柱面参数坐标 $(\theta,z)$ 是圆柱面的无冗余自然参数化：给定 $(\theta,z)$，镜面点的 3D 坐标由
 \[
-\mathbf{P}_{\mathrm{mirror}}=\bigl(x_0+R\cos\theta,\;y_0+R\sin\theta,\;z\bigr)
+\mathbf{P}_{\mathrm{mirror}}=\bigl(x_0+R\sin\theta,\;y_0+R\cos\theta,\;z\bigr)
 \]
 唯一确定，无需附加约束。此外，$(\theta,z)$ 矩形网格直接对应圆柱面的展开图，镜面图案函数 $G(\theta,z)$ 可按标准位图格式存储与检索，便于后续的插值与渲染操作。
 
@@ -298,17 +285,17 @@ T:(u,v)\mapsto(\theta,z),\qquad T^{-1}:(\theta,z)\mapsto(u,v).
 
 镜面上的点参数化为：
 \[
-\mathbf{P}_{\mathrm{mirror}}(\theta,z)=\bigl(x_0+R\cos\theta,\;y_0+R\sin\theta,\;z\bigr).
+\mathbf{P}_{\mathrm{mirror}}(\theta,z)=\bigl(x_0+R\sin\theta,\;y_0+R\cos\theta,\;z\bigr).
 \]
-单位外法向量为 $\mathbf{n}(\theta)=(\cos\theta,\sin\theta,0)$。
+单位外法向量为 $\mathbf{n}(\theta)=(\sin\theta,\cos\theta,0)$。
 
-逆向映射（由镜面到纸面）是本文核心算子。从观察者 $\mathbf{E}$ 出发，经镜面点 $\mathbf{P}_{\mathrm{mirror}}(\theta,z)$ 反射后与纸面 $z=0$ 相交于纸面点 $\mathbf{P}_{\mathrm{paper}}=(u(\theta,z),v(\theta,z),0)$。令单位视线向量
+逆向映射（由镜面到纸面）是本文核心算子。从观察者 $\mathbf{E}$ 出发，经镜面点 $\mathbf{P}_{\mathrm{mirror}}(\theta,z)$ 反射后与纸面 $z=0$ 相交于纸面点 $\mathbf{P}_{\mathrm{paper}}=(u(\theta,z),v(\theta,z),0)$。令入射视线单位向量
 \[
-\mathbf{V}=\frac{\mathbf{E}-\mathbf{P}_{\mathrm{mirror}}}{\lVert\mathbf{E}-\mathbf{P}_{\mathrm{mirror}}\rVert},
+\mathbf{d}=\frac{\mathbf{P}_{\mathrm{mirror}}-\mathbf{E}}{\lVert\mathbf{P}_{\mathrm{mirror}}-\mathbf{E}\rVert},
 \]
 根据反射定律，反射方向向量 $\mathbf{r}$ 满足：
 \[
-\mathbf{r}(\theta,z)=\mathbf{V}-2\bigl(\mathbf{V}\cdot\mathbf{n}(\theta)\bigr)\,\mathbf{n}(\theta).
+\mathbf{r}(\theta,z)=\mathbf{d}-2\bigl(\mathbf{d}\cdot\mathbf{n}(\theta)\bigr)\,\mathbf{n}(\theta).
 \]
 参数方程 $P(t)=\mathbf{P}_{\mathrm{mirror}}+t\mathbf{r}$ 与平面 $z=0$ 求交，得：
 \[
@@ -322,13 +309,13 @@ T^{-1}(\theta,z)=\bigl(u(\theta,z),\;v(\theta,z)\bigr)=\mathbf{P}_{\mathrm{mirro
 
 \textbf{可见性约束}：上述逆向映射仅对可见镜面点有效，需同时满足：
 \[
-\mathbf{V}\cdot\mathbf{n}(\theta)<0\quad\text{（镜面正面朝外可见）},\qquad r_z<0\quad\text{（反射线向下与纸面相交）}.
+\mathbf{d}\cdot\mathbf{n}(\theta)<0\quad\text{（镜面点位于观察者可见侧）},\qquad r_z<0\quad\text{（反射线向下与纸面相交）}.
 \]
 不满足上述条件的镜面点予以剔除，不参与图案生成。
 
 \subsubsection{基于纸面极坐标 $(\rho,\phi)$ 的映射模型}
 
-\textbf{对称放置假设}：约定观察者位于 $x$ 正半轴方向，即 $\mathbf{E}=(D,0,z_E)$，$\phi=0$ 方向指向观察者投影方向。
+\textbf{对称放置假设}：约定观察者位于 $y$ 正半轴方向，即 $\mathbf{E}=(0,D,z_E)$，$\phi=0$ 方向指向观察者投影方向。
 
 以圆柱轴心 $(x_0,y_0)$ 为极点建立纸面极坐标 $(\rho,\phi)$。基于 Hunt et al.（2000）针对柱面镜提出的代数映射模型，定义中间系数（完整推导详见附录）：
 \[
@@ -348,7 +335,7 @@ T^{-1}(\theta,z)=\bigl(u(\theta,z),\;v(\theta,z)\bigr)=\mathbf{P}_{\mathrm{mirro
 正向映射 $T:(u,v)\mapsto(\theta,z)$ 可通过求解以下非线性方程组获得：
 \[
 \begin{cases}
-(x_0+R\cos\theta-u)^2+(y_0+R\sin\theta-v)^2=R^2,\\
+(x_0+R\sin\theta-u)^2+(y_0+R\cos\theta-v)^2=R^2,\\
 \text{反射定律约束条件.}
 \end{cases}
 \]
@@ -360,7 +347,7 @@ T^{-1}(\theta,z)=\bigl(u(\theta,z),\;v(\theta,z)\bigr)=\mathbf{P}_{\mathrm{mirro
 \begin{enumerate}
     \item 在镜面参数域 $(\theta,z)$ 上进行高密度均匀采样；
     \item 对每个采样点计算其在纸面坐标系 $(u,v)$ 或 $(\rho,\phi)$ 下的对应位置，形成带颜色的散点集；
-    \item 使用 \textbf{Delaunay 三角剖分线性插值}将散点转换为规则的纸面图像 $F(u,v)$；在散点稀疏或需要光滑性时可改用薄板样条（TPS）；
+    \item 使用 MATLAB \texttt{scatteredInterpolant} 的自然邻域插值将散点转换为规则的纸面图像 $F(u,v)$，并将凸包外区域置为白色背景；
     \item 通过像素物理尺寸 $a$（由 DPI 确定）完成从物理坐标到离散像素矩阵 $(i,j)$ 的转换。
 \end{enumerate}
 该数值策略与 Wu et al.（2022）采用"反射形状 + 光栅化"替代反向光线追踪的思路一脉相承，均通过正向投影规避了反向映射解析求解的数值困难。
@@ -382,14 +369,14 @@ T^{-1}(\theta,z)=\bigl(u(\theta,z),\;v(\theta,z)\bigr)=\mathbf{P}_{\mathrm{mirro
 
 \subsubsection{几何模型}
 
-观察者眼点 $\mathbf{E}=(D,0,z_E)$。设主视线 $\hat{\mathbf{v}}_0=(-1,0,0)$ 指向圆柱轴心，虚拟视平面 $\Pi$ 垂直于主视线、距眼点 $d_0$，即 $\Pi:\;x=D-d_0$。视平面上以主视线交点为原点建立局部坐标 $(s,t)$（$s$ 水平、$t$ 垂直），则像素对应的空间点为
+观察者眼点 $\mathbf{E}=(0,D,z_E)$。设主视线 $\hat{\mathbf{v}}_0=(0,-1,0)$ 指向圆柱轴心，虚拟视平面 $\Pi$ 垂直于主视线、距眼点 $d_0$，即 $\Pi:\;y=D-d_0$。视平面上以主视线交点为原点建立局部坐标 $(s,t)$（$s$ 水平、$t$ 垂直），则像素对应的空间点为
 \[
-P_{\mathrm{view}}(s,t)=(D-d_0,\;s,\;z_E+t).
+P_{\mathrm{view}}(s,t)=(s,\;D-d_0,\;z_E+t).
 \]
 
 从眼点出发的视线 $P(\lambda)=\mathbf{E}+\lambda\,(P_{\mathrm{view}}-\mathbf{E})$ 与圆柱侧面 $x^2+y^2=R^2,\;0\leq z\leq H$ 联立，得关于 $\lambda$ 的二次方程。取面向观察者一侧的较小正根 $\lambda^{*}$，代回得交点 $Q=(x_Q,y_Q,z_Q)$，其柱面参数为
 \[
-\theta=\operatorname{atan2}(y_Q,x_Q),\qquad z=z_Q.
+\theta=\operatorname{atan2}(x_Q,y_Q),\qquad z=z_Q.
 \]
 若方程无正实根或 $z_Q\notin[0,H]$，则该像素落在镜面外，予以舍弃。由此得到映射
 \[
@@ -408,7 +395,7 @@ T:(s,t)\longmapsto(\theta,z).
 对每个网格节点 $(\theta_k,z_l)$，采用"正向散点 + 插值"策略确定其颜色：
 \begin{enumerate}
     \item 对 $G_{\mathrm{ref}}$ 的每个像素 $(s_m,t_m)$ 计算 $(\theta_m,z_m)=T(s_m,t_m)$，得到散点集 $\{(\theta_m,z_m,s_m,t_m)\}$；
-    \item 在该散点集上对 $(\theta_k,z_l)$ 做二维 Delaunay 三角剖分线性插值，求得视平面坐标 $(s_{kl},t_{kl})$；
+    \item 在该散点集上对 $(\theta_k,z_l)$ 做二维自然邻域插值，求得视平面坐标 $(s_{kl},t_{kl})$；
     \item 在 $G_{\mathrm{ref}}$ 中用双线性插值采样 $(s_{kl},t_{kl})$，赋给 $G(\theta_k,z_l)$；落在映射覆盖区域外的节点置为透明。
 \end{enumerate}
 所得 $G$ 即为理想情况下直接包裹在圆柱侧面、能重建参考图像的纹理。
@@ -429,7 +416,7 @@ T:(s,t)\longmapsto(\theta,z).
 2. 视觉反扭曲 & 按第 3.2 节生成 $G(\theta,z)$ & 映射 $T$ + 散点插值 \\
 3. 正向映射到纸面 & 对每个 $(\theta_k,z_l)$ 计算纸面极坐标 $(\rho_{kl},\phi_{kl})$ & 见下式 \\
 4. 纸面图像重采样 & 由散点 $(\rho_{kl},\phi_{kl})$ 插值反查 $(\theta,z)$，再取 $G$ 颜色 & 得到 $F$ \\
-5. A4 适配与输出 & $(u,v)=(x_0+\rho\cos\phi,\;y_0+\rho\sin\phi)$；调整 $(x_0,y_0)$；以 $\geq300$ DPI 输出 & 必要时优化 $R,H$ 或裁剪 \\
+5. A4 适配与输出 & $(u,v)=(x_0+\rho\sin\phi,\;y_0+\rho\cos\phi)$；调整 $(x_0,y_0)$；以 $\geq300$ DPI 输出 & 必要时优化 $R,H$ 或裁剪 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -447,7 +434,7 @@ T:(s,t)\longmapsto(\theta,z).
 \subsubsection{实现注意事项}
 \begin{itemize}
     \item \textbf{分辨率匹配}：纸面图像因径向拉伸通常需显著高于 $G_{\mathrm{ref}}$ 的分辨率，建议以最大局部雅可比行列式作为上采样因子的参考。
-    \item \textbf{插值方法}：散点到网格阶段以 Delaunay 三角剖分线性插值为默认方法；在散点稀疏或需要光滑性时改用薄板样条（TPS），避免最近邻造成的马赛克。
+    \item \textbf{插值方法}：散点到网格阶段采用 MATLAB \texttt{scatteredInterpolant}，插值方式取 \texttt{natural}，外推方式取 \texttt{none}。自然邻域插值比最近邻更平滑，凸包外区域返回空值，随后统一置为白色背景。
     \item \textbf{可见性剔除}：仅保留 $\hat{\mathbf{v}}\cdot\mathbf{n}(\theta)<0$ 的镜面点，并剔除被圆柱自身遮挡的区域。
     \item \textbf{极端畸变}：当 $R$ 较大或图案靠近镜面边缘时，纸面对应区域会剧烈拉伸，应限制 $\theta$ 取值范围或缩小图案角尺寸。
     \item \textbf{数值稳定}：$z_l\to z_E$ 时 $\alpha_l,\beta_l$ 发散，需将镜面有效高度严格限制在 $z<z_E$ 以内。
@@ -503,7 +490,7 @@ P_3(\theta=+\Theta/2,\;z=z_2),&\quad P_4(\theta=-\Theta/2,\;z=z_2).
 \]
 利用正向映射求出对应纸面极坐标 $(\rho_i,\phi_i)$，纸面直角坐标为：
 \[
-u=x_0+\rho\cos\phi,\qquad v=y_0+\rho\sin\phi.
+u=x_0+\rho\sin\phi,\qquad v=y_0+\rho\cos\phi.
 \]
 A4 幅面（纵向）约束：$0\leq u\leq210$，$0\leq v\leq297$（单位：mm）。
 
@@ -549,15 +536,144 @@ y_0&\leftarrow y_0-\tfrac{1}{2}\bigl(\min_i v_i+\max_i v_i-297\bigr),
 本方案将多参数联合优化问题解耦为"常量预设—单变量扫描—位置微调"的三阶段流程，物理意义清晰、计算简单，标准求解路径仅需一次常数设定。
 
 \subsection{案例一:图 3 蒙娜丽莎设计方案}
-原图简化 $\rightarrow$ 参数选取(给具体 $R$、$H$、$E$ 数值)$\rightarrow$ 纸面图案结果 $\rightarrow$ 合成效果图。
+
+图 3 为写实肖像图像,面部、发丝和背景的灰度层次较多,对切向拉伸和径向压缩均较敏感。为保证镜面观察时人物主体仍保持可辨识,本文采用较高的镜面采样密度,并将圆柱半径、观察距离和观察高度统一固定为
+\[
+R=35\ \mathrm{mm},\qquad D=250\ \mathrm{mm},\qquad z_E=350\ \mathrm{mm}.
+\]
+圆柱物理高度取 $H=150\ \mathrm{mm}$,镜面图像有效高度区间为
+\[
+z\in[2,120]\ \mathrm{mm}.
+\]
+其中 $z_{\min}=2\ \mathrm{mm}$ 用于避开底部 $z=0$ 附近的投影退化区,$z_{\max}=120\ \mathrm{mm}$ 则明显低于观察点高度 $z_E$,可避免 $z\to z_E$ 时纸面投影发散。
+
+在角度设置上,本文未采用 $\phi\approx2\theta$ 的线性近似,而是使用完整的 $\operatorname{atan2}$ 映射公式。因此,镜面总张角取
+\[
+\Theta=130^\circ,\qquad \theta\in[-65^\circ,65^\circ],
+\]
+以获得更宽的镜面横向覆盖范围。镜面参数域被离散为 $600\times400$ 个采样点,经正向光线映射后在 $2970\times2100$ 的横向 A4 画布上进行自然邻域插值,得到可打印纸面图案。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.46\textwidth]{../../outputs/figures/draft/p3_2D_matlab.jpg}
+\includegraphics[width=0.46\textwidth]{../../outputs/figures/draft/p3_mirror_perspective_from_paper.png}
+\caption{蒙娜丽莎案例的纸面畸变图案与柱面观察模拟结果}
+\label{fig:q1-monalisa-result}
+\end{figure}
+
+数值验证表明,在上述参数下,蒙娜丽莎案例的纸面投影范围约为
+\[
+u\in[-142.4,142.4]\ \mathrm{mm},\qquad v\in[-76.8,147.2]\ \mathrm{mm}.
+\]
+当前横向 A4 输出画布取 $u\in[-148.5,148.5]$ mm,$v\in[-50,160]$ mm,故该方案约有 $98.78\%$ 的采样点落入画布范围。局部雅可比行列式的最小值约为
+\[
+J_{\min}=9.033>0,
+\]
+说明在 $\Theta=130^\circ$ 下映射仍保持局部单调,未出现自交叠或方向反转。少量超出 $v=-50$ mm 的点主要位于纸面下边界附近,属于增大张角带来的边界代价。
 
 \subsection{案例二:图 4 卡通猫设计方案}
-同上。和 3.7 用不同的参数更好,体现参数敏感性已探索。
+
+图 4 为卡通猫图像,颜色块面清晰、轮廓相对简单,相比写实肖像对局部形变更具有容忍度。为验证同一几何模型对不同图像类型的适应性,卡通猫案例保持圆柱和观察者参数不变:
+\[
+R=35\ \mathrm{mm},\qquad D=250\ \mathrm{mm},\qquad z_E=350\ \mathrm{mm},\qquad H=150\ \mathrm{mm}.
+\]
+考虑到卡通图像纵向细节少、主体近似居中,将镜面有效高度压缩为
+\[
+z\in[2,90]\ \mathrm{mm},
+\]
+并同样采用总张角
+\[
+\Theta=130^\circ.
+\]
+镜面参数域离散为 $400\times300$ 个采样点。较小的高度区间使纸面投影更紧凑,也为较大张角保留了更充足的 A4 边界余量。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.46\textwidth]{../../outputs/figures/draft/p4_2D_matlab.jpg}
+\includegraphics[width=0.46\textwidth]{../../outputs/figures/draft/p4_mirror_perspective_from_paper.png}
+\caption{卡通猫案例的纸面畸变图案与柱面观察模拟结果}
+\label{fig:q1-cat-result}
+\end{figure}
+
+该案例的纸面投影范围约为
+\[
+u\in[-103.1,103.1]\ \mathrm{mm},\qquad v\in[-46.0,109.4]\ \mathrm{mm},
+\]
+完全落入当前横向 A4 画布范围。对应的局部雅可比行列式最小值同样约为
+\[
+J_{\min}=9.032>0.
+\]
+因此,卡通猫案例在 $130^\circ$ 张角下既无自交叠,也不存在边界裁切问题,说明较短的高度区间能够显著提升大张角设计的可行性。
+
+\subsection{正向重建验证}
+
+为避免仅凭纸面图案的视觉形态判断方案可行,本文进一步进行正向重建验证。具体做法是:以生成的纯纸面图案 $F(u,v)$ 为输入,对观察者视点 $\mathbf{E}$ 发出的每条视线求其与圆柱面的交点,再利用相同的光学映射反查该镜面点对应的纸面坐标,从 $F$ 中双线性采样得到观察者实际看到的颜色。该过程等价于从纸面图案重新渲染镜面观察图 $\hat{G}$,可检验反问题设计是否在正向成像中恢复目标图案。
+
+为了降低数值渲染误差,正向重建中采用两类输出:
+\begin{itemize}
+    \item 柱面参数域展开图:直接在 $(\theta,z)$ 规则网格上采样,用于检查图像内容是否完整;
+    \item 观察点透视图:从 $\mathbf{E}=(0,250,350)$ mm 处进行透视渲染,并使用 $2\times$ 超采样和 Lanczos 缩放降低边缘锯齿。
+\end{itemize}
+验证结果显示,两幅目标图像均能在柱面上恢复为可辨识的主体图案。其中蒙娜丽莎案例更接近边界极限,小猫案例则具有更大的边界冗余。由此可见,$90^\circ$ 并非本模型的物理上限,而只是 $\phi\approx2\theta$ 近似解释的高精度范围;在使用完整公式时,$130^\circ$ 张角仍可得到稳定成像。
+
+\begin{table}[htbp]
+\centering
+\caption{Q1 两个案例的边界与单调性验证}
+\label{tab:q1-validation}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{案例} & \textbf{张角} & \textbf{高度区间/mm} & \textbf{A4 内点比例} & \textbf{$J_{\min}$} \\
+\midrule
+蒙娜丽莎 & $130^\circ$ & $[2,120]$ & $98.78\%$ & $9.033$ \\
+卡通猫 & $130^\circ$ & $[2,90]$ & $100.00\%$ & $9.032$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+图~\ref{fig:q1-paper-footprint} 给出了两组案例在 $\Theta=130^\circ$ 时的纸面投影足迹。可以看出,两者均呈典型环形扇区分布,圆柱底面对应的圆盘区域被排除在可打印图案之外。蒙娜丽莎案例由于 $z_{\max}=120$ mm,外圈半径更大,其下边界更接近 A4 画布外缘;卡通猫案例高度区间较短,投影区域整体更紧凑。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.72\textwidth]{../../outputs/figures/draft/q1_paper_footprint.png}
+\caption{Q1 两个案例在纸面上的投影足迹与 A4 边界关系}
+\label{fig:q1-paper-footprint}
+\end{figure}
+
+进一步地,图~\ref{fig:q1-jacobian} 给出了局部雅可比行列式在镜面参数域 $(\theta,z)$ 上的分布。两幅热力图均未出现非正区域,说明当前参数下映射保持局部单调。热力图还表明畸变强度主要随高度 $z$ 变化:靠近底部时纸面压缩/拉伸更强,随 $z$ 增大逐渐趋于平缓。这一现象解释了为何 $z_{\max}$ 是影响纸面边界和图像稳定性的关键参数。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.47\textwidth]{../../outputs/figures/draft/q1_jacobian_mona_lisa.png}
+\includegraphics[width=0.47\textwidth]{../../outputs/figures/draft/q1_jacobian_cat.png}
+\caption{蒙娜丽莎与卡通猫案例的雅可比行列式热力图}
+\label{fig:q1-jacobian}
+\end{figure}
 
 \subsection{参数敏感性分析}
-$R$、$H$、$E$ 各变化时结果如何变。配对比图矩阵。
+
+从公式
+\[
+\rho(\theta,z)=\sqrt{\alpha^2R^2+\beta^2D^2+2\alpha\beta RD\cos\theta}
+\]
+可以看出,$R$、$D$、$z_E$ 与 $z_{\max}$ 会共同决定纸面图案的径向跨度和横向张开程度。固定其余参数时:
+\begin{itemize}
+    \item 增大 $R$ 会增大圆柱遮挡圆盘,并改变内圈附近投影形态;过大的 $R$ 会压缩纸面可用空间。
+    \item 增大 $D$ 使观察光线更接近平行,切向拉伸减弱,纸面图案两翼向中部收缩。
+    \item 增大 $z_{\max}$ 会显著提高外圈投影半径,是导致 A4 边界溢出的主要因素。
+    \item 增大总张角 $\Theta$ 会优先扩大纸面下边界和两侧边缘处的投影范围,因此需结合 A4 边界和雅可比行列式共同判断。
+\end{itemize}
+对当前参数进行角度扫描可知,$120^\circ$ 到 $130^\circ$ 仍保持单调性;当张角继续增至 $140^\circ$ 以上时,蒙娜丽莎案例的 A4 下边界裁切明显增加。接近 $180^\circ$ 时,数值雅可比行列式出现负值,说明局部映射开始发生方向反转。因此,本文选择 $130^\circ$ 作为兼顾镜面覆盖范围与边界稳定性的折中方案。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{../../outputs/figures/draft/q1_angle_scan.png}
+\caption{总张角变化对 A4 覆盖率与局部单调性的影响}
+\label{fig:q1-angle-scan}
+\end{figure}
 
 \subsection{本章小结}
+
+本章建立了由目标镜面图案反求纸面畸变图案的完整流程。通过镜面参数化、反射光线映射、散点插值和 A4 边界验证,分别完成了蒙娜丽莎与卡通猫两组案例设计。数值结果表明,在 $R=35$ mm,$D=250$ mm,$z_E=350$ mm 的条件下,两组方案在 $130^\circ$ 张角下均保持局部单调成像;其中卡通猫完全落入 A4 画布,蒙娜丽莎仅存在少量边界裁切。正向重建图进一步验证了纸面图案能够在圆柱镜中恢复目标图像,说明本文模型可用于实际的柱面反射变形艺术设计。
 
 \section{Q2:纸面也有意义的作品设计}
 \subsection{子问题分析}

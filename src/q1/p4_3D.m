@@ -1,21 +1,20 @@
 function render_3D_cat_system()
-    % 注：角跨度从 120° 调整为 90°，使其落入角度放大效应（φ≈2θ）的线性适用范围
-    % 详见论文 3.6 节
+    % 注：当前按 130° 张角生成，用于大张角对照实验
 
-    % 1. 小猫专属物理参数
-    R = 3.5; D = 25.0; zE = 35.0; H = 15.0;
-    z_min = 0.2; z_max = 9.0;
-    theta_max = pi / 2;        % 90度张角（角度放大效应适用范围内）
+    % 1. 小猫专属物理参数（单位：mm）
+    R = 35; D = 250; zE = 350; H = 150;
+    z_min = 2; z_max = 90;
+    theta_max = 13 * pi / 18;  % 130度张角
     
     figure('Color', 'white', 'Position', [100, 100, 1000, 800]);
     hold on; grid on; view(3);
     
-    % 2. 绘制 A4 纸平面 (Y轴范围: -5.0 到 16.0)
-    paper_x = [-14.85, 14.85, 14.85, -14.85];
-    paper_y = [-5.0, -5.0, 16.0, 16.0];
+    % 2. 绘制 A4 纸平面 (Y轴范围: -50 到 160)
+    paper_x = [-148.5, 148.5, 148.5, -148.5];
+    paper_y = [-50, -50, 160, 160];
     paper_z = [0, 0, 0, 0];
     fill3(paper_x, paper_y, paper_z, [0.9 0.9 0.9], 'FaceAlpha', 0.6, 'EdgeColor', 'k', 'LineWidth', 2);
-    text(9, 14, 0, 'A4 Paper', 'FontSize', 14, 'FontWeight', 'bold');
+    text(90, 140, 0, 'A4 Paper', 'FontSize', 14, 'FontWeight', 'bold');
     
     % 3. 绘制实体不透明圆柱体 (灰色/青色表现实体)
     [THETA_CYL, Z_CYL] = meshgrid(linspace(0, 2*pi, 60), linspace(0, H, 50));
@@ -25,23 +24,23 @@ function render_3D_cat_system()
     surf(X_CYL, Y_CYL, Z_CYL, 'FaceColor', [0.3 0.8 0.9], 'EdgeColor', 'none', 'FaceAlpha', 0.95);
     
     plot3(0, 0, 0, 'k+', 'MarkerSize', 12, 'LineWidth', 2);
-    text(2, 0, 0, 'Origin O(0,0)', 'FontSize', 10, 'FontWeight', 'bold');
+    text(20, 0, 0, 'Origin O(0,0)', 'FontSize', 10, 'FontWeight', 'bold');
     
     % 4. 绘制观察者眼点 E (在 +Y 区域，满足实心反射)
     eye_x = 0; eye_y = D; eye_z = zE;
     plot3(eye_x, eye_y, eye_z, 'ro', 'MarkerSize', 10, 'MarkerFaceColor', 'r');
     
-    text(eye_x, eye_y + 1, eye_z + 2, sprintf(' Eye E(0, %.1f, %.1f)', D, zE), ...
+    text(eye_x, eye_y + 10, eye_z + 20, sprintf(' Eye E(0, %.0f, %.0f) mm', D, zE), ...
         'FontSize', 12, 'Color', 'r', 'FontWeight', 'bold');
     
     % 辅助线与地面位置
     plot3([eye_x, eye_x], [eye_y, eye_y], [0, eye_z], 'r:', 'LineWidth', 1.5);
     plot3(eye_x, eye_y, 0, 'rx', 'MarkerSize', 10);
-    text(eye_x, eye_y + 1, 0, sprintf('Observer D=%.1fcm', D), 'Color', 'r');
+    text(eye_x, eye_y + 10, 0, sprintf('Observer D=%.0fmm', D), 'Color', 'r');
     
-    % 5. 追踪同侧反射光线 (小猫 90°)
-    thetas = linspace(-theta_max/2, theta_max/2, 9); % 采样 9 条线以表现 90° 的扇面
-    mz = 6.0; % 采样高度
+    % 5. 追踪同侧反射光线 (小猫 130°)
+    thetas = linspace(-theta_max/2, theta_max/2, 9); % 采样 9 条线以表现 130° 的扇面
+    mz = 60; % 采样高度
     
     for i = 1:length(thetas)
         th = thetas(i);
@@ -70,14 +69,14 @@ function render_3D_cat_system()
     end
     
     % 6. 设置与美化
-    xlabel('X Width (cm)', 'FontWeight', 'bold');
-    ylabel('Y Depth (cm)', 'FontWeight', 'bold');
-    zlabel('Z Height (cm)', 'FontWeight', 'bold');
-    title('Physically Accurate 3D Trace for Cat (90° Angle, φ≈2θ Valid Range)', 'FontSize', 16);
+    xlabel('X Width (mm)', 'FontWeight', 'bold');
+    ylabel('Y Depth (mm)', 'FontWeight', 'bold');
+    zlabel('Z Height (mm)', 'FontWeight', 'bold');
+    title('Physically Accurate 3D Trace for Cat (130° Angle)', 'FontSize', 16);
     
     legend([h1, h2], {'Incident Ray (from Eye)', 'Reflected Ray (to Paper)'}, 'Location', 'northeast');
     
     axis equal; 
     % 摄像机机位：侧上方，清晰展示折线关系和极宽的扇面覆盖
-    set(gca, 'CameraPosition', [60, 60, 40]); 
+    set(gca, 'CameraPosition', [600, 600, 400]); 
 end

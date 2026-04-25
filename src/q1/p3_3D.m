@@ -1,16 +1,16 @@
 function render_3D_system_corrected()
-    % 1. 物理参数
-    R = 3.5; D = 25.0; zE = 35.0; H = 15.0;
+    % 1. 物理参数（单位：mm）
+    R = 35; D = 250; zE = 350; H = 150;
     
     figure('Color', 'white', 'Position', [100, 100, 1000, 800]);
     hold on; grid on; view(3);
     
-    % 2. 绘制 A4 纸平面 (Y轴方向: -5.0 到 16.0)
-    paper_x = [-14.85, 14.85, 14.85, -14.85];
-    paper_y = [-5.0, -5.0, 16.0, 16.0];
+    % 2. 绘制 A4 纸平面 (Y轴方向: -50 到 160)
+    paper_x = [-148.5, 148.5, 148.5, -148.5];
+    paper_y = [-50, -50, 160, 160];
     paper_z = [0, 0, 0, 0];
     fill3(paper_x, paper_y, paper_z, [0.9 0.9 0.9], 'FaceAlpha', 0.6, 'EdgeColor', 'k', 'LineWidth', 2);
-    text(9, 14, 0, 'A4 Paper', 'FontSize', 14, 'FontWeight', 'bold');
+    text(90, 140, 0, 'A4 Paper', 'FontSize', 14, 'FontWeight', 'bold');
     
     % 3. 绘制实体不透明圆柱体 (中心在 0,0)
     [THETA_CYL, Z_CYL] = meshgrid(linspace(0, 2*pi, 50), linspace(0, H, 50));
@@ -20,23 +20,24 @@ function render_3D_system_corrected()
     surf(X_CYL, Y_CYL, Z_CYL, 'FaceColor', [0.3 0.8 0.9], 'EdgeColor', 'none', 'FaceAlpha', 0.9);
     
     plot3(0, 0, 0, 'k+', 'MarkerSize', 12, 'LineWidth', 2);
-    text(2, 0, 0, 'Origin O(0,0)', 'FontSize', 10, 'FontWeight', 'bold');
+    text(20, 0, 0, 'Origin O(0,0)', 'FontSize', 10, 'FontWeight', 'bold');
     
     % 4. 绘制观察者眼点 E (在 +Y 同侧)
     eye_x = 0; eye_y = D; eye_z = zE;
     plot3(eye_x, eye_y, eye_z, 'ro', 'MarkerSize', 10, 'MarkerFaceColor', 'r');
     
-    text(eye_x, eye_y + 1, eye_z + 2, sprintf(' Eye E(0, %.1f, %.1f)', D, zE), ...
+    text(eye_x, eye_y + 10, eye_z + 20, sprintf(' Eye E(0, %.0f, %.0f) mm', D, zE), ...
         'FontSize', 12, 'Color', 'r', 'FontWeight', 'bold');
     
     % 辅助垂直线
     plot3([eye_x, eye_x], [eye_y, eye_y], [0, eye_z], 'r:', 'LineWidth', 1.5);
     plot3(eye_x, eye_y, 0, 'rx', 'MarkerSize', 10);
-    text(eye_x, eye_y + 1, 0, sprintf('Observer D=%.1fcm', D), 'Color', 'r');
+    text(eye_x, eye_y + 10, 0, sprintf('Observer D=%.0fmm', D), 'Color', 'r');
     
     % 5. 追踪同侧反射光线
-    thetas = linspace(-pi/4, pi/4, 7); 
-    mz = 8.0; 
+    theta_max = 13 * pi / 18;  % 130度张角
+    thetas = linspace(-theta_max/2, theta_max/2, 9);
+    mz = 80; 
     
     for i = 1:length(thetas)
         th = thetas(i);
@@ -63,14 +64,14 @@ function render_3D_system_corrected()
     end
     
     % 6. 设置与美化
-    xlabel('X Width (cm)', 'FontWeight', 'bold');
-    ylabel('Y Depth (cm)', 'FontWeight', 'bold');
-    zlabel('Z Height (cm)', 'FontWeight', 'bold');
+    xlabel('X Width (mm)', 'FontWeight', 'bold');
+    ylabel('Y Depth (mm)', 'FontWeight', 'bold');
+    zlabel('Z Height (mm)', 'FontWeight', 'bold');
     title('Physically Accurate 3D Geometric Optics Rendering', 'FontSize', 16);
     
     legend([h1, h2], {'Incident Ray (from Eye)', 'Reflected Ray (to Paper)'}, 'Location', 'northeast');
     
     axis equal; 
     % 设定一个极具透视感的摄像机机位，从侧面清晰看到折线
-    set(gca, 'CameraPosition', [60, 60, 40]); 
+    set(gca, 'CameraPosition', [600, 600, 400]); 
 end

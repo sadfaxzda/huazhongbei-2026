@@ -1,11 +1,10 @@
 function generate_cat_perfect_layout()
-    % 注：角跨度从 120° 调整为 90°，使其落入角度放大效应（φ≈2θ）的线性适用范围
-    % 详见论文 3.6 节
+    % 注：当前按 130° 张角生成，用于大张角对照实验
 
-    % 1. 以圆心为原点的小猫专属参数
-    R = 3.5; D = 25.0; zE = 35.0;
-    z_min = 0.2; z_max = 9.0;
-    theta_max = pi / 2;        % 90度张角（角度放大效应适用范围内）
+    % 1. 以圆心为原点的小猫专属参数（单位：mm）
+    R = 35; D = 250; zE = 350;
+    z_min = 2; z_max = 90;
+    theta_max = 13 * pi / 18;  % 130度张角
 
     img = imread('/Users/zhangchunhe/Desktop/mathmodel/data/reference/图4.png');
     img = im2double(img);
@@ -33,9 +32,9 @@ function generate_cat_perfect_layout()
     x_paper = rho .* sin(phi);
     y_paper = rho .* cos(phi);
     
-    % 3. 生成 A4 横向画布 (X:[-14.85, 14.85], Y:[16.0, -5.0])
-    disp('正在执行 90° 平滑插值（角度放大效应适用范围内）...');
-    [grid_x, grid_y] = meshgrid(linspace(-14.85, 14.85, 2970), linspace(16.0, -5.0, 2100));
+    % 3. 生成 A4 横向画布 (X:[-148.5, 148.5], Y:[160, -50])，单位：mm
+    disp('正在执行 130° 平滑插值...');
+    [grid_x, grid_y] = meshgrid(linspace(-148.5, 148.5, 2970), linspace(160, -50, 2100));
     
     grid_colors = ones(2100, 2970, 3);
     F_R = scatteredInterpolant(x_paper, y_paper, R_chan, 'natural', 'none');
@@ -52,6 +51,7 @@ function generate_cat_perfect_layout()
     grid_colors(repmat(cylinder_mask, [1, 1, 3])) = 1; 
     
     final_img = uint8(grid_colors * 255);
+    imwrite(final_img, '/Users/zhangchunhe/Desktop/mathmodel/outputs/figures/draft/p4_2D_clean.png');
     
     % 5. 绘图与强制锁定横版比例
     f = figure('Visible', 'off');
@@ -60,10 +60,10 @@ function generate_cat_perfect_layout()
     imshow(final_img, 'Parent', ax);
     hold on;
     
-    % 标尺坐标 (1cm = 100像素)
+    % 标尺坐标 (1mm = 10像素)
     px_x = 1485; 
     px_y = 1600; 
-    r_px = R * 100;
+    r_px = R * 10;
     axis_color = [0.4 0.4 0.4];
     
     % 画轴与刻度
@@ -71,11 +71,11 @@ function generate_cat_perfect_layout()
     plot([px_x, px_x], [1, 2100], 'Color', axis_color, 'LineWidth', 2);
     
     % X 轴与 Y 轴刻度线辅助
-    for cm = -10:5:10
-        plot([px_x + cm*100, px_x + cm*100], [px_y - 20, px_y + 20], 'Color', axis_color, 'LineWidth', 2);
+    for mm = -100:50:100
+        plot([px_x + mm*10, px_x + mm*10], [px_y - 20, px_y + 20], 'Color', axis_color, 'LineWidth', 2);
     end
-    for cm = -5:5:15
-        plot([px_x - 20, px_x + 20], [px_y - cm*100, px_y - cm*100], 'Color', axis_color, 'LineWidth', 2);
+    for mm = -50:50:150
+        plot([px_x - 20, px_x + 20], [px_y - mm*10, px_y - mm*10], 'Color', axis_color, 'LineWidth', 2);
     end
     
     % 画圆与中心标记
@@ -83,11 +83,11 @@ function generate_cat_perfect_layout()
     plot(px_x + r_px*cos(theta_c), px_y + r_px*sin(theta_c), 'k', 'LineWidth', 4);
     plot(px_x, px_y, 'r+', 'MarkerSize', 15, 'LineWidth', 3);
     
-    text(px_x + 50, px_y - 60, sprintf('Origin O(0,0)\nR=%.1fcm', R), 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold');
+    text(px_x + 50, px_y - 60, sprintf('Origin O(0,0)\nR=%.0fmm', R), 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold');
     text(2900, px_y - 30, 'X', 'FontSize', 22, 'Color', axis_color, 'FontWeight', 'bold');
     text(px_x + 30, 40, 'Y', 'FontSize', 22, 'Color', axis_color, 'FontWeight', 'bold');
     
     print(f, '/Users/zhangchunhe/Desktop/mathmodel/outputs/figures/draft/p4_2D_matlab.jpg', '-djpeg', '-r300');
     close(f);
-    disp('成功！已生成 90° 张角小猫图纸（应呈漂亮半环）！');
+    disp('成功！已生成 130° 张角小猫图纸！');
 end

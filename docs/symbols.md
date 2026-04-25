@@ -32,7 +32,7 @@
 |---|---|---|---|
 | $\mathbf{E} = (D, 0, z_E)$ | 观察者视点 3D 位置（对称放置） | mm | 单点视点假设 |
 | $D$ | 观察者到圆柱轴（z 轴）的水平距离 | mm | 对称放置下 $D = x_E$，标量 |
-| $z_E$ | 观察者视点高度 | mm | $z_E > 0$，通常取 $150\text{–}250$ mm |
+| $z_E$ | 观察者视点高度 | mm | $z_E > 0$，通常取 $250\text{–}350$ mm |
 
 ## 3. 镜面参数化与 3D 坐标
 
@@ -49,9 +49,9 @@
 
 | 符号 | 含义 | 单位 | 备注 |
 |---|---|---|---|
-| $\mathbf{V}$ | 视线单位向量（从 $\mathbf{E}$ 指向 $\mathbf{P}_{\text{mirror}}$） | — | $\mathbf{V}=(\mathbf{P}_{\text{mirror}}-\mathbf{E})/\|\mathbf{P}_{\text{mirror}}-\mathbf{E}\|$ |
-| $\mathbf{D}$ | 反射方向向量 | — | $\mathbf{D}=\mathbf{V}-2(\mathbf{V}\cdot\mathbf{n})\mathbf{n}$，单位向量 |
-| $t$ | 反射线参数（$P(t)=\mathbf{P}_{\text{mirror}}+t\mathbf{D}$） | — | 与 $z=0$ 平面相交时 $t=-z/D_z$ |
+| $\mathbf{d}$ | 入射视线单位向量（从 $\mathbf{E}$ 指向 $\mathbf{P}_{\text{mirror}}$） | — | $\mathbf{d}=(\mathbf{P}_{\text{mirror}}-\mathbf{E})/\|\mathbf{P}_{\text{mirror}}-\mathbf{E}\|$ |
+| $\mathbf{r}$ | 反射方向向量 | — | $\mathbf{r}=\mathbf{d}-2(\mathbf{d}\cdot\mathbf{n})\mathbf{n}$，单位向量 |
+| $t$ | 反射线参数（$P(t)=\mathbf{P}_{\text{mirror}}+t\mathbf{r}$） | — | 与 $z=0$ 平面相交时 $t=-z/r_z$ |
 
 ## 5. 纸面坐标（双表示）
 
@@ -87,8 +87,8 @@
 
 | 符号 | 含义 | 备注 |
 |---|---|---|
-| $\alpha(z)$ | 极坐标映射系数 | $\alpha(z)=(H_E-2z)/(H_E-z)$ |
-| $\beta(z)$ | 极坐标映射系数 | $\beta(z)=z/(H_E-z)$ |
+| $\alpha(z)$ | 极坐标映射系数 | $\alpha(z)=(z_E-2z)/(z_E-z)$ |
+| $\beta(z)$ | 极坐标映射系数 | $\beta(z)=z/(z_E-z)$ |
 
 ## 9. Q3 兼容性分析专用
 
@@ -120,4 +120,3 @@
    - 矩阵维度改用大写 $M, N$
    - 增加纸面极坐标 $(\rho, \phi)$ 与直角坐标 $(u, v)$ 的区分
    - 增加 Q3 专用符号
-
