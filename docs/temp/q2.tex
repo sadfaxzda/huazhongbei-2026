@@ -1,0 +1,282 @@
+\documentclass[12pt,a4paper]{ctexart}
+\usepackage{amsmath,amssymb,booktabs}
+
+\begin{document}
+
+\section{Q2:纸面也有意义的作品设计}
+
+% ===========================
+% 4.1 子问题分析与可行条件
+% ===========================
+
+\subsection{子问题分析与可行条件}
+
+本节基于第二章的几何映射模型与第三章的逆向映射框架，对问题2的两个子情形进行系统的约束分析与自由度讨论，明确各自的设计可行性与实现条件。
+
+\subsubsection{两区域分解与自由度界定}
+
+对于任意给定的圆柱镜参数 $(R,H)$ 与观察者位置 $E=(D,0,z_E)$，纸面 $A=[0,W_{A4}]\times[0,L_{A4}]$ 可按光学可见性划分为两个互补子区域。
+
+\textbf{定义 4.1（反射有效区）} 反射有效区 $\mathcal{I}_{\mathrm{vis}}\subset A$ 是纸面上所有满足以下条件的点 $(u,v)$ 的集合：存在镜面点 $P_{\mathrm{mirror}}(\theta,z)$，满足可见性约束
+\[
+V\cdot n(\theta)<0 \quad\text{(镜面朝向观察者)},\qquad r_z<0 \quad\text{(反射线向下到达纸面)},
+\]
+使得逆向映射 $T^{-1}$ 将该镜面点映至 $(u,v)$。等价地，
+\[
+\mathcal{I}_{\mathrm{vis}} = T^{-1}\bigl(\{(\theta,z)\in[\theta_{\min},\theta_{\max}]\times[z_{\min},z_{\max}]: V\cdot n(\theta)<0,\; r_z<0\}\bigr).
+\]
+
+\textbf{定义 4.2（自由设计区）} 自由设计区为 $A\setminus\mathcal{I}_{\mathrm{vis}}$，其中的任意图案对镜面反射虚像均无贡献。
+
+\textbf{几何特征：} 在圆柱镜对称放置假设下，$\mathcal{I}_{\mathrm{vis}}$ 呈环形扇区形态，其内半径由镜面底部边缘与观察者的几何关系决定，外半径由镜面顶部边缘决定（详见 2.4 节）。
+
+纸面图案 $F$ 可分解为两部分：
+\[
+F(u,v)=
+\begin{cases}
+F_{\mathrm{eff}}(u,v), & (u,v)\in\mathcal{I}_{\mathrm{vis}},\\
+F_{\mathrm{hidden}}(u,v), & (u,v)\in A\setminus\mathcal{I}_{\mathrm{vis}}.
+\end{cases}
+\]
+
+由 2.4.1 节的逆向映射，$F_{\mathrm{eff}}$ 与镜面图案 $G$ 之间满足确定性关系：
+\[
+F_{\mathrm{eff}} = G\circ T,\qquad
+G = F_{\mathrm{eff}}\circ T^{-1}.
+\]
+
+式 (4.2) 揭示了核心事实：$\mathcal{I}_{\mathrm{vis}}$ 上的图案与镜面图案通过映射 $T$ 形成一一对应，\textbf{不存在额外的自由度}。这一映射的确定性是分析两个子情形自由度差异的数学基础。
+
+\subsubsection{子问题 (a)：镜面图案未指定}
+
+若 $G$ 不预先指定，则设计者同时拥有对 $F_{\mathrm{eff}}$（通过选取 $G$）和 $F_{\mathrm{hidden}}$ 的完全控制权。此时约束集仅包括：
+\begin{itemize}
+    \item \textbf{几何边界约束：} $\mathcal{I}_{\mathrm{vis}}$ 的外形由 $R,H,D,z_E$ 决定，不可更改；
+    \item \textbf{整体性约束：} 拼接后的 $F$ 在 $A$ 上须构成可识别、有意义的图案。
+\end{itemize}
+前者为确定性的几何条件，后者为艺术设计条件。由于 $F_{\mathrm{eff}}$ 与 $F_{\mathrm{hidden}}$ 均可自由选择，可将 $\mathcal{I}_{\mathrm{vis}}$ 的边界视觉连续性条件纳入整体构图进行统一规划。
+
+\textbf{构造性方案：} 首先设计一幅在 $A$ 上整体有意义的纸面图案 $F$，取其向 $\mathcal{I}_{\mathrm{vis}}$ 的限制作为 $F_{\mathrm{eff}}$，再由式 (4.2) 反求
+\[
+G = F_{\mathrm{eff}}\circ T^{-1}.
+\]
+只要 $F_{\mathrm{eff}}$ 不为常值函数，$G$ 必然携带经柱面畸变映射后的可解读结构，从而也具有独立的艺术意义。
+
+\textbf{结论：} 子问题 (a) 必然存在可行解，且设计空间连续、充裕。设计自由度总数为 $\dim(F_{\mathrm{eff}}) + \dim(F_{\mathrm{hidden}})$，二者均不受先验约束。
+
+\subsubsection{子问题 (b)：镜面图案已指定}
+
+若 $G$ 为给定的外部输入，由式 (4.2)，反射有效区图案
+\[
+F_{\mathrm{eff}} = G\circ T
+\]
+被\textbf{完全锁定}，无任何调整自由度。此时问题转化为：是否存在 $F_{\mathrm{hidden}}$，使得由式 (4.1) 定义的 $F$ 在 $A$ 上具有独立艺术意义？
+
+这构成一个\textbf{约束图像补全问题}（constrained image inpainting）。记 $F_{\mathrm{eff}}$ 在 $\mathcal{I}_{\mathrm{vis}}$ 边界 $\partial\mathcal{I}_{\mathrm{vis}}$ 上的取值为边界条件，要求 $F_{\mathrm{hidden}}$ 在 $A\setminus\mathcal{I}_{\mathrm{vis}}$ 上与之一阶（视觉）连续地衔接，并形成可识别的整体内容。该问题是否可解，取决于 $F_{\mathrm{eff}}$ 的视觉结构能否被合理的 $F_{\mathrm{hidden}}$ 所``迁就''。
+
+由 2.4.2 节的极坐标正向映射可知，柱面反射畸变在纸面上的拉伸场是非均匀且非线性的：
+\begin{itemize}
+    \item 方位角 $\theta$ 方向映射为近似放射方向的\textbf{剧烈拉伸}；
+    \item 径向拉伸比随 $z\to z_E$ \textbf{趋于发散}（$\alpha(z),\beta(z)$ 在 $z=z_E$ 处存在奇点）。
+\end{itemize}
+
+因此，$F_{\mathrm{eff}}$ 的视觉特征直接继承自 $G$ 的图像属性：
+
+\begin{table}[htbp]
+\centering
+\caption{$G$ 的视觉类型与可行性}
+\label{tab:feasibility-b}
+\begin{tabular}{p{4cm}p{5cm}p{5cm}}
+\toprule
+$G$ 的类型 & $F_{\mathrm{eff}}$ 的畸变特征 & 可行性 \\
+\midrule
+粗轮廓、大色块、低频结构（剪影、几何色块、粗线条卡通） & 主要表现为色块的拉伸与弯曲，具有较高可塑性 & 可行——自由区可通过顺势延伸、补全色块，将其有机融入山水、衣纹、建筑装饰等具象图形 \\
+高频细节、细密纹理、碎片化轮廓（人像照片、复杂自然纹理） & 呈现为无规律的高频碎片，视觉可解释性极低 & 不可行——对任意 $F_{\mathrm{hidden}}$ 均难以将其吸收进有意义的整体图像 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{可行性条件（定性表述）：} 存在有意义的纸面设计，当且仅当 $G$ 的视觉复杂度低于可由 $F_{\mathrm{hidden}}$ 迁就的阈值。
+
+该条件可量化为 $G$ 的边缘密度、梯度直方图熵或高频能量占比等指标，具体阈值的标定将在 4.3 节结合实验给出。
+
+\subsubsection{两种情形的对比}
+
+\begin{table}[htbp]
+\centering
+\caption{子问题 (a) 与 (b) 的对比}
+\label{tab:compare-ab}
+\begin{tabular}{lcccc}
+\toprule
+情形 & $F_{\mathrm{eff}}$ & $F_{\mathrm{hidden}}$ & 可行性 & 自由度来源 \\
+\midrule
+(a) $G$ 未指定 & 可自由选择 & 可自由选择 & 必然可行 & 两区域均自由 \\
+(b) $G$ 已指定 & 被 $G\circ T$ 锁定 & 可自由选择 & 取决于 $G$ 的复杂度 & 仅自由设计区可用 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{根本差异：} 两个子情形的根本差异在于对 $F_{\mathrm{eff}}$ 的控制权。
+\begin{itemize}
+    \item 子问题 (a) 通过放弃指定 $G$，换取了反射有效区的设计自由，从而总能构造出整体有意义的 $F$；
+    \item 子问题 (b) 在保留 $G$ 指定的同时，失去了对 $F_{\mathrm{eff}}$ 的主导权，可行性退化为对 $G$ 视觉属性的条件依赖。
+\end{itemize}
+这一分析为后续 4.2--4.4 节的设计方法与案例提供了完整的理论依据。
+
+% ====================================================
+% 4.2 频域对称性与双重艺术意义的构造原理
+% ====================================================
+
+\subsection{频域对称性与双重艺术意义的构造原理}
+
+第 4.1 节从自由度与可行性角度给出了子问题 (a) 必然存在解的结论。然而，``存在解''与``如何构造解''之间仍有距离——需要一套系统的方法，使设计者能有依据地选择或设计纸面图案 $F$，并确信其反射后的镜面图案 $G$ 同样具备可辨识的艺术结构。本节将从柱面映射的方向解耦特性出发，借助傅里叶分析建立纸面与镜面在频域中的能量对应关系，由此导出构造双重艺术意义的充分性判据与系统设计方法。
+
+\subsubsection{柱面映射的方向解耦特性}
+
+根据第 2.4.2 节的纸面极坐标正向映射模型，在对称放置 $E=(D,0,z_E)$ 条件下，纸面极坐标 $(\rho,\phi)$ 与镜面柱面坐标 $(\theta,z)$ 之间的映射 $T$ 由下式给出：
+
+\[
+\begin{aligned}
+\rho(\theta,z) &= \sqrt{\alpha(z)^2 R^2 + \beta(z)^2 D^2 + 2\alpha(z)\beta(z)RD\cos\theta},\\
+\phi(\theta,z) &= \operatorname{atan2}\!\bigl(\alpha(z)R\sin\theta + \beta(z)D\sin2\theta,\;
+\alpha(z)R\cos\theta + \beta(z)D\cos2\theta\bigr),
+\end{aligned}
+\]
+
+其中
+
+\[
+\alpha(z)=\frac{z_E-2z}{z_E-z},\qquad \beta(z)=\frac{z}{z_E-z}.
+\]
+
+在此映射中，纸面径向距离 $\rho$ 与镜面高度 $z$ 之间存在依赖，纸面极角 $\phi$ 与镜面方位角 $\theta$ 之间存在依赖，两类依赖在耦合程度上具有显著差异。
+
+\textbf{性质 4.1（方向近似解耦）} 在典型观察条件 $D\gg R$ 下，映射 $T$ 的雅可比矩阵
+
+\[
+J = \frac{\partial(\rho,\phi)}{\partial(\theta,z)} =
+\begin{pmatrix}
+\partial\rho/\partial\theta & \partial\rho/\partial z \\
+\partial\phi/\partial\theta & \partial\phi/\partial z
+\end{pmatrix}
+\]
+
+的非对角元远小于对角元。具体地：
+\begin{itemize}
+    \item 对角元 $\partial\rho/\partial z$ 和 $\partial\phi/\partial\theta$ 的量级均为 $O(1)$；
+    \item 非对角元 $\partial\rho/\partial\theta$ 和 $\partial\phi/\partial z$ 的量级为 $O(R/D)$。
+\end{itemize}
+以典型参数 $D=300\;\mathrm{mm},\;R=30\;\mathrm{mm}$ 为例，$R/D=0.1$，非对角元相对值在 $0.12$ 以下。
+
+\textbf{证明概要：} 直接对式 (4.3) 求偏导。$\partial\rho/\partial\theta$ 含因子 $\sin\theta\cdot(R/D)$，由 $R/D\ll1$ 压制；$\partial\phi/\partial z$ 的分子中包含 $\mathrm{d}\alpha/\mathrm{d}z$ 和 $\mathrm{d}\beta/\mathrm{d}z$ 与 $R$ 的乘积项，同样受 $R/D$ 因子压制。对角元 $\partial\rho/\partial z$ 的主项来自 $\alpha(z)$ 和 $\beta(z)$ 随 $z$ 的变化，不含 $R/D$ 因子；$\partial\phi/\partial\theta$ 的主项为 $1+O(R/D)$。完整推导见附录 A。
+
+\textbf{物理含义：} 纸面上环绕圆柱中心的图案变化称为\textbf{角向变化}（沿 $\phi$ 方向），将主要传递为镜面上沿圆柱周向的图案变化（沿 $\theta$ 方向，即镜面横向）；纸面上远离或靠近圆柱中心的图案变化称为\textbf{径向变化}（沿 $\rho$ 方向），将主要传递为镜面上沿高度方向的图案变化（沿 $z$ 方向，即镜面纵向）。虽然映射在全局上是非线性且不均匀的，但这种方向上的近似解耦为频域分析提供了结构性的基础。
+
+\subsubsection{频域能量迁移规律}
+
+为定量刻画纸面与镜面图案结构之间的传递关系，引入两种频域表示：
+
+\begin{itemize}
+    \item \textbf{纸面极坐标傅里叶变换} $\mathcal{F}_{\mathrm{polar}}(F)$：对 $F(\rho,\phi)$ 在极坐标系下做二维傅里叶变换，频率坐标为 $(k_\rho,k_\phi)$，分别对应径向空间频率与角向空间频率（即沿 $\rho$ 和 $\phi$ 方向的变化快慢）。
+    \item \textbf{镜面直角坐标傅里叶变换} $\mathcal{F}_{\mathrm{cart}}(G)$：对 $G(\theta,z)$ 在 $(\theta,z)$ 矩形域上做二维傅里叶变换，频率坐标为 $(f_\theta,f_z)$，分别对应镜面横向（沿 $\theta$）与纵向（沿 $z$）的空间频率。
+\end{itemize}
+
+在子问题 (a) 的构造方向下，镜面图案由纸面图案经正向映射生成：
+\[
+G = F \circ T^{-1}.
+\]
+
+在局部区域，$T$ 可一阶近似为其雅可比矩阵。结合性质 4.1 的对角优势，谱能量将沿主方向传递，交叉方向上的能量泄漏较小。经过对雅可比矩阵的谱分解与变量替换（完整推导见附录 B），得到以下近似对应关系：
+
+\textbf{定理 4.1（频域能量对应）} 在方向解耦近似下，纸面极坐标频谱与镜面直角坐标频谱之间满足：
+\[
+\begin{aligned}
+E_G^{\mathrm{horiz}}(f_\theta) &\approx \kappa_1 \cdot E_F^{\mathrm{ang}}(k_\phi),\\
+E_G^{\mathrm{vert}}(f_z) &\approx \kappa_2 \cdot E_F^{\mathrm{rad}}(k_\rho),
+\end{aligned}
+\]
+
+其中各能量谱定义为
+\[
+\begin{aligned}
+E_G^{\mathrm{horiz}}(f_\theta) &= \int \bigl|\mathcal{F}_{\mathrm{cart}}(G)(f_\theta,f_z)\bigr|^2\,\mathrm{d}f_z,\\
+E_G^{\mathrm{vert}}(f_z) &= \int \bigl|\mathcal{F}_{\mathrm{cart}}(G)(f_\theta,f_z)\bigr|^2\,\mathrm{d}f_\theta,\\
+E_F^{\mathrm{ang}}(k_\phi) &= \int \bigl|\mathcal{F}_{\mathrm{polar}}(F)(k_\rho,k_\phi)\bigr|^2\,\mathrm{d}k_\rho,\\
+E_F^{\mathrm{rad}}(k_\rho) &= \int \bigl|\mathcal{F}_{\mathrm{polar}}(F)(k_\rho,k_\phi)\bigr|^2\,\mathrm{d}k_\phi,
+\end{aligned}
+\]
+
+$\kappa_1,\kappa_2>0$ 为与雅可比行列式有关的正标度因子。
+
+\textbf{物理含义：}
+\begin{itemize}
+    \item 纸面图案的\textbf{角向结构能量}（$E_F^{\mathrm{ang}}$，即沿 $\phi$ 方向的变化），经柱面反射后主要转化为镜面图案的\textbf{横向结构能量}（$E_G^{\mathrm{horiz}}$，即沿 $\theta$ 方向的竖条纹/垂直纹理）；
+    \item 纸面图案的\textbf{径向结构能量}（$E_F^{\mathrm{rad}}$，即沿 $\rho$ 方向的变化），主要转化为镜面图案的\textbf{纵向结构能量}（$E_G^{\mathrm{vert}}$，即沿 $z$ 方向的横条纹/水平纹理）。
+\end{itemize}
+映射的非线性会造成频率的非均匀伸缩（$\rho(\theta,z)$ 中的 $\sqrt{\cdot}$ 运算引入压缩），但\textbf{方向性分配关系是稳健的}——交叉项能量始终受 $O(R/D)$ 因子压制。
+
+\subsubsection{双重艺术意义的频域判据}
+
+定理 4.1 为``双方均有艺术意义''提供了可操作的频域解释。要使镜面图案 $G$ 具有可辨识的艺术结构，它必须在某个方向上具备规律性或特征性的频谱分布。由此可得到两条充分性判据：
+
+\textbf{判据 4.1（放射--竖纹对应）} 若纸面图案 $F$ 在极坐标下的角向频谱分量 $E_F^{\mathrm{ang}}$ 丰富且具有清晰的结构（例如呈现显著的旋转对称性、螺旋臂、放射状线条等），则反射后的镜面图案 $G$ 将以竖条纹或垂直方向的规律纹理为主，该类镜面纹理自身可作为独立的抽象几何图案进行解读。
+
+\textbf{典型例子：} 曼陀罗花纹、蔷薇花截面、齿轮图、放射状光芒、向日葵螺旋——这些图案的角向结构显著，反射后呈现为竖琴弦般垂直排列的色彩条纹。
+
+\textbf{判据 4.2（环形--横纹对应）} 若纸面图案 $F$ 在极坐标下的径向频谱分量 $E_F^{\mathrm{rad}}$ 占据主导且具有艺术意义（例如同心圆、年轮纹样、径向渐变带），则镜面图案 $G$ 将以横条纹或水平方向的规律纹理为主，同样具备独立的视觉意义。
+
+\textbf{典型例子：} 靶环、树木年轮、水波涟漪、声波同心环——这些图案的径向结构显著，反射后呈现为水平方向的层状纹理。
+
+\textbf{两种方向并存的情形：} 对于实际的自然图案，角向与径向变化往往同时存在。定理 4.1 保证了这两种方向上的能量在反射后分别映射到镜面的横向与纵向，互不混淆。这意味着纸面图案的``角向有意义结构''与``径向有意义结构''可以在反射后成为镜面上可独立欣赏的横竖纹理，而无需两者在内容上存在语义关联。例如：
+\begin{itemize}
+    \item 纸面上的一朵旋转对称的\textbf{曼陀罗花}（角向意义为主）$\rightarrow$ 反射后呈现为垂直的色彩条纹（镜面横向意义），二者在语义上完全独立，但在频域中由定理 4.1 严格关联；
+    \item 纸面的\textbf{同心环加放射线}（径向与角向并存）$\rightarrow$ 反射后呈现为横竖交叉的网格纹理，各自携带对应方向的结构信息。
+\end{itemize}
+
+\textbf{与子问题 (b) 的关系：} 判据 4.1--4.2 同样可用于分析子问题 (b) 的可行性边界。若指定 $G$ 以横纹或竖纹为主（即 $E_G^{\mathrm{horiz}}$ 或 $E_G^{\mathrm{vert}}$ 占优），则其在纸面上的畸变前身 $F_{\mathrm{eff}} = G\circ T$ 可预判为角向或径向主导——前者视觉可塑性较高，易于被 $F_{\mathrm{hidden}}$ 迁就；若 $G$ 为各向同性的高频纹理（横竖能量分布均匀且杂乱），则 $F_{\mathrm{eff}}$ 在两个方向上均呈现碎片化，补全难度极大。这一观察将在 4.4 节进一步量化。
+
+\subsubsection{系统设计方法}
+
+基于上述理论，子问题 (a) 的``双方均有意义''设计可遵循以下四步流程：
+
+\textbf{步骤 1：确定主结构方向。} 根据艺术表达需求，选择纸面图案的设计方向：
+\begin{itemize}
+    \item \textbf{角向主导}（设计放射状、旋转对称构图）$\rightarrow$ 镜面获得竖纹纹理；
+    \item \textbf{径向主导}（设计同心环、辐射渐变构图）$\rightarrow$ 镜面获得横纹纹理；
+    \item \textbf{混合均衡}（同时包含角向与径向结构）$\rightarrow$ 镜面获得横竖网格纹理，两方向均有意义。
+\end{itemize}
+
+\textbf{步骤 2：构造有意义的纸面图案。} 在选定方向上设计或选择已有图案。推荐图案库包括：
+
+\begin{table}[htbp]
+\centering
+\caption{推荐候选图案分类}
+\label{tab:pattern-lib}
+\begin{tabular}{lll}
+\toprule
+类别 & 角向结构图案 & 径向结构图案 \\
+\midrule
+几何对称 & 曼陀罗、万花筒、星形多边形 & 靶环、同心圆、斐波那契螺旋 \\
+自然纹理 & 向日葵头状花序、海星 & 树木年轮、洋葱截面、水波 \\
+人工设计 & 齿轮、风扇叶片、旋涡标志 & 唱片纹路、阶梯金字塔 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+确保该图案在被观察者直接观看时已具备独立艺术意义（即在 $A$ 上整体可辨识）。
+
+\textbf{步骤 3：正向映射生成镜面图案并验证。} 以该纸面图案作为 $F$，通过 $G = F\circ T^{-1}$ 计算出镜面反射图案：
+\begin{itemize}
+    \item 依据定理 4.1 预判其横向与纵向纹理类型（竖纹/横纹/网格）；
+    \item 从视觉上检验 $G$ 是否具备可解读的独立结构；
+    \item 必要时计算 $E_F^{\mathrm{ang}}$ 与 $E_F^{\mathrm{rad}}$ 的比值，定量确认主方向；
+    \item 若不满足要求，返回步骤 2 调整纸面图案的频率成分分布（例如增强角向调制或增加径向变化）。
+\end{itemize}
+
+\textbf{步骤 4：辅助艺术加工。} 对生成的镜面图案 $G$ 进行适度的色彩调整、对比度增强或叠加低幅值装饰纹理，以强化艺术表现力，但须保持主频结构不变，避免破坏由纸面传递过来的方向性信息。
+
+\textbf{与 4.1 节的关系：} 本设计流程利用了 4.1.2 节中 $\mathcal{I}_{\mathrm{vis}}$ 与自由设计区的完全可控性——整个纸面 $A$ 均可用于构图，不受镜面图案的约束。这正是子问题 (a) 相对于 (b) 的核心优势。
+
+\textbf{与后续章节的关系：} 上述流程将``双方均有意义''的设计从依赖偶然灵感提升为基于频域理论的系统构造策略，为第 4.3 节的案例研究提供了理论工具，也为第 4.4 节面向指定镜面图案的适配设计提供了方法基础。
+
+\end{document}
