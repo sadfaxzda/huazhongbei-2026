@@ -7,7 +7,7 @@ function generate_cat_perfect_layout()
     z_min = 0.2; z_max = 9.0;
     theta_max = pi / 2;        % 90度张角（角度放大效应适用范围内）
 
-    img = imread('cat.jpg');
+    img = imread('/Users/zhangchunhe/Desktop/mathmodel/data/reference/图4.png');
     img = im2double(img);
 
     % 2. 映射计算
@@ -87,7 +87,7 @@ function generate_cat_perfect_layout()
     text(2900, px_y - 30, 'X', 'FontSize', 22, 'Color', axis_color, 'FontWeight', 'bold');
     text(px_x + 30, 40, 'Y', 'FontSize', 22, 'Color', axis_color, 'FontWeight', 'bold');
     
-    print(f, 'output_cat_perfect_matlab.jpg', '-djpeg', '-r300');
+    print(f, '/Users/zhangchunhe/Desktop/mathmodel/outputs/figures/draft/p4_2D_matlab.jpg', '-djpeg', '-r300');
     close(f);
     disp('成功！已生成 90° 张角小猫图纸（应呈漂亮半环）！');
 end

@@ -4,7 +4,7 @@ function generate_monalisa_perfect_layout()
     z_min = 0.2; z_max = 12.0; % 紧贴底面起步
     theta_max = pi / 2;
     
-    img = imread('monalisa.jpg');
+    img = imread('/Users/zhangchunhe/Desktop/mathmodel/data/reference/图3.png');
     img = im2double(img);
     
     % 2. 映射计算
@@ -72,7 +72,7 @@ function generate_monalisa_perfect_layout()
     
     text(px_x + 50, px_y - 60, sprintf('Origin O(0,0)\nR=%.1fcm', R), 'FontSize', 20, 'Color', 'k', 'FontWeight', 'bold');
     
-    print(f, 'output_monalisa_perfect_matlab.jpg', '-djpeg', '-r300');
+    print(f, '/Users/zhangchunhe/Desktop/mathmodel/outputs/figures/draft/p3_2D_matlab.jpg', '-djpeg', '-r300');
     close(f);
     disp('成功！已生成完美排版的图纸！');
 end
