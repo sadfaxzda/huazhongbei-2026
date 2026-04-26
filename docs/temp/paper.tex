@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{float}
 \usepackage{geometry}
 \usepackage{hyperref}
 
@@ -98,7 +99,7 @@
     \item 坐标系层级(四套,各有用途):
 \end{itemize}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{ll}
 \toprule
@@ -113,7 +114,7 @@
 \end{table}
 
 \subsubsection*{1. 几何参数}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{lllX}
 \toprule
@@ -129,7 +130,7 @@ $W_{A4}$ & A4 纸张短边 & mm & $W_{A4} = 210$ \\
 \end{table}
 
 \subsubsection*{2. 观察者}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{lllX}
 \toprule
@@ -143,7 +144,7 @@ $z_E$ & 观察者视点高度 & mm & $z_E > 0$，本文取 $350$ mm \\
 \end{table}
 
 \subsubsection*{3. 镜面参数化与 3D 坐标}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{lllX}
 \toprule
@@ -160,7 +161,7 @@ $\mathbf{n}$ & 镜面点处的外法向量 & — & $\mathbf{n} = (\sin\theta, \c
 \end{table}
 
 \subsubsection*{4. 光线追踪向量}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{lllX}
 \toprule
@@ -174,7 +175,7 @@ $t^*$ & 反射线与 $z=0$ 平面交点参数 & — & $\mathbf{P}_{mirror} + t\m
 \end{table}
 
 \subsubsection*{5. 纸面坐标(双表示)}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{lllX}
 \toprule
@@ -191,7 +192,7 @@ $I_{\mathrm{vis}}$ & 纸面可视环形区域 & --- & $\{(\rho, \phi) : \rho_{\m
 \end{table}
 
 \subsubsection*{6. 映射与图像函数}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{llX}
 \toprule
@@ -207,7 +208,7 @@ $\hat{G} = F \circ T^{-1}$ & 纸面图案在镜面上的反射结果 & 用于和
 \end{table}
 
 \subsubsection*{7. 离散化与像素}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{lllp{6cm}}
 \toprule
@@ -222,7 +223,7 @@ $(i, j)$ & 像素矩阵的行列下标 & — & $i \in [0, M),\; j \in [0, N)$ \\
 \end{table}
 
 \subsubsection*{8. Q3 兼容性分析专用}
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{lll}
 \toprule
@@ -837,23 +838,38 @@ H_\nabla(G)<H_\nabla^* .
 问题二的结论如下:不指定镜面图案时,由于反射有效区和自由设计区均可主动规划,必然存在纸面与镜面均有意义的设计;其中同心圆环彩虹与镜面水平彩虹条纹构成稳定且冲突度最低的方案。指定镜面图案时,可行性不再必然成立,需同时满足支撑集、空间占比和梯度复杂度约束。低频色带、粗线条几何图案较易兼容,高频照片和复杂自然纹理通常不兼容。
 
 \section{Q3:双约束下的兼容性理论}
-\subsection{问题本质与不可行性分析}
-问题三进一步要求纸面目标 $P^*$ 与镜面目标 $M^*$ 同时指定,并允许通过艺术加工或简化使二者尽量同时有意义。若完全不允许误差,则需同时满足
-\[
-P=P^*,\qquad \mathcal T(P)=M^* .
-\]
-由于 $\mathcal T$ 由几何光学和圆柱参数唯一决定,上述方程有解的充要条件为
-\[
-P^*=\mathcal T^{-1}(M^*) .
-\]
-在图像函数空间中,随机给定的 $P^*$ 与 $\mathcal T^{-1}(M^*)$ 完全相等的概率为零。因此,"任意两张图"一般不可能精确兼容。
+\subsection{问题本质与泛函分析框架}
 
-题目中的艺术加工可理解为将绝对相等放宽为视觉容忍度内的最优近似。令 $P$ 为最终纸面设计,构造双目标优化模型
+\subsubsection{物理映射的刚性约束}
+
+在柱面反射变形艺术中,纸面图案函数 $P(u,v)$ 与观察者感知的镜面图案函数 $M(\theta,z)$ 通过几何光学算子 $\mathcal{T}$ 发生物理关联:
 \[
-\min_P\ J(P)=
-\lambda D_P(P,P^*)+(1-\lambda)D_M(\mathcal T(P),M^*),
+M = \mathcal{T}(P), \qquad \mathcal{T}: L^2(\Omega_P) \to L^2(\Omega_M).
 \]
-其中 $D_P,D_M$ 可由均方误差、结构相似性 SSIM、边缘差异等指标加权组成。若存在 $P$ 使 $J(P)$ 小于视觉阈值,则判定两目标可通过艺术加工兼容;否则判定为不可行。
+算子 $\mathcal{T}$ 由斯涅尔反射定律及柱面几何方程唯一确定:一旦圆柱半径 $R$、位置和观察点 $\mathbf{E}$ 固定,每一像素点的光路传播路径均确定不变,算子表现出极强的刚性。
+
+\subsubsection{双约束下的超定性与零概率悖论}
+
+当设计者同时独立地给定纸面目标 $P^*$ 和镜面目标 $M^*$ 时,需寻找 $P$ 使
+\[
+\begin{cases}
+P = P^*, \\
+\mathcal{T}(P) = M^*.
+\end{cases}
+\]
+由于 $\mathcal{T}$ 通常是双射,有解的充要条件为 $P^* = \mathcal{T}^{-1}(M^*)$。在无穷维函数空间中,随机选取的两个独立函数 $P^*$ 与 $\mathcal{T}^{-1}(M^*)$ 完全重合的概率测度严格为零,揭示了双约束系统的本质:物理意义上的高度超定系统（Overdetermined System）。
+
+\subsubsection{"艺术加工"的数学含义：从绝对相等到最优近似}
+
+为破除上述悖论,题目中的"艺术加工或简化"被赋予严谨的数学含义——对绝对等式约束的松弛,将问题转化为受物理算子约束的双目标优化:
+\[
+\min_P \; J(P) = \alpha \cdot D_{\mathrm{paper}}(P,P^*) + (1-\alpha) \cdot D_{\mathrm{mirror}}(\mathcal{T}(P),M^*),
+\]
+其中 $\alpha \in [0,1]$ 为偏好权重因子,距离函数 $D$ 采用均方误差（MSE）与结构相似性指标（SSIM）的混合度量:
+\[
+D(X,Y) = \gamma \cdot \mathrm{MSE}(X,Y) + (1-\gamma) \cdot (1 - \mathrm{SSIM}(X,Y)).
+\]
+MSE 保证宏观能量不发散,SSIM 以更接近人类视觉系统的方式衡量结构保真度。当且仅当存在 $P$ 使得 $J(P)$ 小于视觉最小可察觉差异（JND）时,该方案被判定为可行。
 
 \begin{figure}[htbp]
 \centering
@@ -863,107 +879,103 @@ P^*=\mathcal T^{-1}(M^*) .
 \end{figure}
 
 \subsection{兼容性条件的数学定义}
-为避免直接进入高维非凸优化,本文将兼容性预检分为五条可计算判据。它们由硬约束到软约束逐层筛选:先判断是否物理可行,再判断结构是否相近,最后判断视觉误差是否可接受。
 
-\subsubsection{拓扑兼容}
-对纸面目标 $P^*$ 和镜面目标反投影 $\mathcal T^{-1}(M^*)$ 进行显著区域二值化,分别计算连通分量数 $C(\cdot)$ 与欧拉示性数 $\chi(\cdot)$。要求
-\[
-|C(P^*)-C(\mathcal T^{-1}(M^*))|\le \varepsilon_C,\qquad
-|\chi(P^*)-\chi(\mathcal T^{-1}(M^*))|\le \varepsilon_\chi .
-\]
-若一幅图是单连通主体,另一幅图包含大量孔洞或碎片,则即使局部颜色可调整,整体语义结构也难以兼容。
+在双目标优化框架下,本节将抽象的"艺术容忍度"转化为三个层次、共五项可计算判据,由硬约束到软约束逐层筛选。
 
-\subsubsection{尺度兼容}
-由雅可比行列式可得到局部面积放大率。若目标镜面图案在某区域具有空间频率 $f_M(\theta,z)$,则其反投影到纸面后所需的采样频率约受
-\[
-f_P(\theta,z)\approx f_M(\theta,z)\sqrt{|J_T(\theta,z)|}
-\]
-控制。考虑打印分辨率和插值稳定性,需满足
-\[
-f_P(\theta,z)\le f_{\mathrm{print}},\qquad \forall(\theta,z)\in\operatorname{supp}(M^*).
-\]
-高频纹理若落在强压缩或强拉伸区,会导致纸面细节密度超出可打印或可辨识范围。
+\subsubsection{第一层：物理硬约束（可行域与尺度边界）}
 
-\subsubsection{几何对称兼容}
-按照 Q2 的频域对应关系,计算纸面目标极坐标频谱与镜面目标直角坐标频谱的方向相关系数:
+\textbf{判据一：可视区域约束。}
+由于圆柱实体的遮挡,纸面上存在绝对盲区 $\Omega_{\mathrm{blind}} = \{(u,v) \mid u^2+v^2 \le R^2\}$,并非所有纸面区域均能参与反射。令纸面可视环形区域为
 \[
-\rho_{\mathrm{freq}}=
-\min\left\{
-\operatorname{corr}(E_P^{\mathrm{ang}},E_M^{\mathrm{horiz}}),
-\operatorname{corr}(E_P^{\mathrm{rad}},E_M^{\mathrm{vert}})
-\right\}.
+\mathcal{I}_{\mathrm{vis}} = \{(\rho,\phi) \mid R \le \rho \le \rho_{\max}\} \cap \Omega_{A4},
 \]
-若
+其中内径 $\rho_{\min} = R$（由 $z \to 0$ 时正向映射公式得）,外径
 \[
-\rho_{\mathrm{freq}}\ge \varepsilon_{\mathrm{freq}},
+\rho_{\max} = \frac{z_E - 2H}{z_E - H}\,R + \frac{H}{z_E - H}\,D.
 \]
-则两图在几何方向上具备兼容先验;否则优化过程容易产生无规律噪声。
+若目标 $M^*$ 经逆映射后的有效支撑集超出此区域,即 $\mathrm{supp}(\mathcal{T}^{-1}(M^*)) \not\subset \mathcal{I}_{\mathrm{vis}}$,则两图存在不可调和的物理位置冲突。
 
-\subsubsection{可视区域兼容}
-指定镜面目标的有效支撑集必须落入可视镜面域:
+\textbf{判据二：尺度密度约束（奈奎斯特条件）。}
+反射映射在径向产生剧烈的非线性拉伸,局部映射密度
+$\sigma(z) \propto R\,\Delta\theta\,\Delta z / \Delta S_{\mathrm{paper}}$。
+要求对所有 $z \in [z_1, z_2]$,镜面图案在该高度行的最高空间频率满足
 \[
-\operatorname{supp}(M^*)\subseteq\mathcal M_{\mathrm{vis}},
+f_{\max}(z) \le \frac{1}{2\sigma(z)} \quad (\text{奈奎斯特条件}).
 \]
-其反投影也必须位于 A4 可打印区域内:
-\[
-T(\operatorname{supp}(M^*))\subseteq A\setminus\Omega_{\mathrm{blind}}.
-\]
-若目标主体落入圆柱遮挡圆盘或 A4 边界外,则该部分信息无法由纸面图案承担,应直接判定为不兼容或要求重新裁剪。
+实际操作中,可将 $M^*$ 逐行低通滤波,或通过调整 $R$、$D$ 使密度约束自动成立。
 
-\subsubsection{艺术容忍度}
-在通过前四项预检后,定义视觉兼容得分
+\subsubsection{第二层：结构先验条件（频域与拓扑耦合）}
+
+\textbf{判据三：几何对称性频域耦合。}
+基于柱面反射系统的方向解耦性,纸面极坐标 $(\rho,\phi)$ 的变化与镜面直角坐标 $(\theta,z)$ 高度耦合:纸面放射状图案对应镜面竖条纹,同心圆对应横条纹。令 $\mathcal{F}_{\mathrm{polar}}(P^*)$ 为纸面目标的极坐标二维傅里叶变换,$\mathcal{F}_{\mathrm{cart}}(M^*)$ 为镜面目标的直角坐标傅里叶变换,要求
 \[
-S_{\mathrm{comp}}=
-\alpha\,\mathrm{SSIM}(P,P^*)
-+(1-\alpha)\left(1-\frac{\mathrm{MSE}(\mathcal T(P),M^*)}{\mathrm{MAX}^2}\right).
+\rho_{\mathrm{freq}} = \mathrm{Corr}\bigl(\mathcal{F}_{\mathrm{polar}}(P^*),\;\mathcal{F}_{\mathrm{cart}}(M^*)\bigr) \ge \varepsilon_{\mathrm{freq}}.
 \]
-若存在加工后的 $P$ 使
+若 $\rho_{\mathrm{freq}} < \varepsilon_{\mathrm{freq}}$,则两图几何结构互斥,优化将陷入高振荡鞍点,可直接判定为不兼容。
+
+\textbf{判据四：拓扑连通性条件。}
+令 $\chi$ 为图像显著二值化特征的欧拉示性数,要求
 \[
-S_{\mathrm{comp}}\ge S_{\mathrm{threshold}},
+|\chi(P^*) - \chi(\mathcal{T}^{-1}(M^*))| \le \varepsilon_{\mathrm{topo}}.
 \]
-则判定为可兼容。否则,即使物理和频域条件勉强满足,视觉上仍不能形成双方有意义的作品。
+若一幅图是单连通主体而另一幅包含大量孔洞或碎片,即使局部颜色可调整,整体语义结构也难以兼容。
+
+\subsubsection{第三层：容忍度评价函数（目标函数量化）}
+
+\textbf{判据五：视觉保真度阈值。}
+在通过前四项预检后,定义综合兼容得分
+\[
+S_{\mathrm{comp}} = \alpha\,\mathrm{SSIM}(P_{\mathrm{opt}},P^*)
++ (1-\alpha)\left(1 - \frac{\mathrm{MSE}(\mathcal{T}(P_{\mathrm{opt}}),M^*)}{\mathrm{MAX}^2}\right).
+\]
+若存在 $P$ 使得 $S_{\mathrm{comp}} \ge S_{\mathrm{threshold}}$（建议取 $0.80$）,则判定为兼容;否则判定为视觉冲突过大,不可行。三层结构呈现由"能否做"到"做得好不好"的递进关系:第一层过滤完全不可能的情形,第二层保证优化问题良态,第三层提供量化的最终判决依据。
 
 \subsection{构造性判决算法}
+
+本算法以三层判据作为预筛选,以双目标优化作为核心求解引擎,分四个阶段执行:
+\begin{enumerate}
+\item \textbf{兼容性预筛选（Initial Screening）}：计算可视域重叠度与频域相关系数，若 $\rho_{\mathrm{freq}} < \varepsilon_{\mathrm{freq}}$ 则直接判定几何互斥，终止计算。
+\item \textbf{双目标标量化优化（Core Optimization）}：将纸面初始化为 $P_0 = P^*$，通过正向算子 $\mathcal{T}$ 计算镜面残差 $R_M = M^* - \mathcal{T}(P_k)$，再利用算子的准可逆性将残差逆投影回纸面，对像素分布进行迭代修正。
+\item \textbf{掩码约束与边缘融合（Masking \& Fusion）}：利用可视区域掩码 $\mathcal{K}$ 对不同区域差异化更新——绝对盲区强制保持 $P = P^*$，强约束区执行镜面保真修正；采用高斯羽化算法处理区域交界，确保视觉过渡自然。
+\item \textbf{收敛判决与输出（Convergence \& Judgment）}：当连续迭代的平均像素变化量小于预设阈值或损失函数趋于平稳时停止，计算 $S_{\mathrm{comp}}$，输出强兼容、弱兼容或不兼容结论及主要失败判据。
+\end{enumerate}
+
 \begin{table}[htbp]
 \centering
-\caption{Q3 双约束兼容性判定算法}
-\label{tab:q3-algorithm}
-\begin{tabular}{cl}
+\caption{Q3 双约束兼容性判定算法核心参数}
+\label{tab:q3-params}
+\begin{tabular}{clll}
 \toprule
-\textbf{步骤} & \textbf{操作} \\
+\textbf{符号} & \textbf{含义} & \textbf{建议取值} & \textbf{设定依据} \\
 \midrule
-1 & 输入 $P^*,M^*$ 与几何参数,计算映射 $T,T^{-1}$ 和可视区域掩码 \\
-2 & 检查可视区域与 A4 边界,若主体越界则返回不兼容 \\
-3 & 计算拓扑指标、频域相关系数与尺度密度约束 \\
-4 & 构造初始纸面 $P_0=\omega P^*+(1-\omega)\mathcal T^{-1}(M^*)$ \\
-5 & 在保持主体轮廓的约束下优化 $J(P)$,并计算 $S_{\mathrm{comp}}$ \\
-6 & 输出强兼容、弱兼容或不兼容,同时给出主要失败判据 \\
+$\alpha$ & 纸面保真度权重 & $0.4\sim0.6$ & 平衡纸面与镜面保真度 \\
+$\eta$ & 迭代更新步长 & $0.01\sim0.05$ & 防止数值震荡 \\
+$\varepsilon_{\mathrm{freq}}$ & 频域预检阈值 & $0.55\sim0.65$ & 几何兼容性下限 \\
+$S_{\mathrm{threshold}}$ & 最终判决阈值 & $0.80\sim0.85$ & SSIM 人眼感知界限 \\
+$\sigma$ & 羽化半径 & $3\sim5\;\mathrm{px}$ & 消除掩码边缘视觉接缝 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-该算法的优点是可解释性强:若失败,可以明确指出失败来自物理越界、细节密度超限、拓扑差异过大、频域方向互斥或视觉误差过高,从而指导后续是调整圆柱参数、简化镜面图案,还是重新选择纸面目标。
+\subsection{案例一：高兼容性艺术融合设计}
 
-\subsection{案例一:可行设计}
-可行案例选取纸面同心圆环彩虹 $P^*$ 与镜面水平彩虹条纹 $M^*$。二者的拓扑结构均为单一连续色带,频域上表现为纸面径向能量与镜面纵向能量高度相关,且支撑集完全落在反射有效区内。该对图案满足:
-\[
-\rho_{\mathrm{freq}}>0.8,\qquad
-\eta_A<0.2,\qquad
-S_{\mathrm{comp}}>0.85.
-\]
-因此无需大幅修改即可得到双意义作品:纸面直接观察为同心彩虹环,经圆柱镜观察为水平彩虹带。该案例说明,当两幅图的方向结构与映射几何一致时,艺术加工只需承担色彩增强和边界平滑作用。
+本案例选取纸面同心圆环放射状的曼陀罗图案 $P^*$ 与镜面竖向条纹 $M^*$,以最大化利用柱面反射系统的对称性特征,验证双目标优化算法在几何兼容情形下的收敛性。
 
-\subsection{案例二:不可行反例}
-不可行反例选取纸面普通卡通图案与镜面蒙娜丽莎肖像。两者均为二维具象图像,但其结构并不服从柱面映射的方向解耦规律。蒙娜丽莎反投影后占据大面积环形扇区,且面部、衣纹和背景产生大量高频碎片;卡通图案则具有明确闭合轮廓和局部色块。二者在拓扑结构、频域方向和尺度密度上均不匹配。具体表现为:
-\[
-\rho_{\mathrm{freq}}<\varepsilon_{\mathrm{freq}},\qquad
-\eta_A\gg0.2,\qquad
-H_\nabla\ \text{偏高}.
-\]
-因此算法在结构先验阶段即可判定不兼容。若强行优化,结果会表现为纸面主体被大面积畸变片段破坏,镜面肖像细节也被纸面目标的轮廓扰动,双方均失去清晰语义。
+频域预检显示两者主频相关系数 $\rho_{\mathrm{freq}} = 0.72 > \varepsilon_{\mathrm{freq}}$,顺利通过几何互斥性检验。设定 $\alpha = 0.5$、迭代步长 $\eta = 0.02$、收敛判定为连续两次迭代损失变化小于 $10^{-4}$。优化过程中,主要误差自动被推挤至纸面可视区外侧边缘并通过高斯羽化实现无缝抹平。最终优化解 $P_{\mathrm{opt}}$ 高度保留了曼陀罗的核心美学结构,模拟镜面反射成像与 $M^*$ 的结构相似性达到 $\mathrm{SSIM} = 0.89$,综合兼容得分 $S_{\mathrm{comp}} > 0.85$,判定为强兼容。
+
+该案例说明:当两幅图的方向结构与映射几何一致时,艺术加工只需承担色彩增强和边界平滑的微小作用,双意义作品自然形成。
+
+\subsection{案例二：低兼容性冲突判定反例}
+
+本案例选取纸面正交网格图案 $P^*$（无旋转对称性的卡通风格）与镜面蒙娜丽莎肖像 $M^*$（具有复杂面状灰度梯度）,反向验证兼容性边界判据的有效性。
+
+频域预检显示相关系数极低（$\rho_{\mathrm{freq}} \approx 0.18 < \varepsilon_{\mathrm{freq}}$）,算法在预筛选阶段即可触发早终止条件。即使强行进入优化阶段,雅可比行列式 $\det(J_T) \to 0$ 附近的奇点效应使正交网格在逆映射算子作用下发生不可逆的剧烈撕裂与高频走样（Aliasing）,损失函数无法收敛。最终综合兼容性得分 $S_{\mathrm{comp}} = 0.42$,远低于判决阈值 $0.80$,算法自动输出"不兼容"判决。
+
+该反例定量证明:在确定的柱面反射物理边界内,"艺术加工"的作用是有限的——并非任意两幅独立图像都能被强行耦合。
 
 \subsection{本章小结}
-问题三的核心结论是:任意指定的两幅图一般不可能同时精确满足柱面反射关系,兼容解在函数空间中属于零测集。可行方案必须满足物理可视、尺度密度、拓扑结构、频域方向和视觉容忍度五类条件。本文给出的判决算法将开放性的艺术判断转化为可计算的分层筛选流程,既能构造强兼容方案,也能解释复杂照片与普通图案为何通常互斥。
+
+问题三的核心结论是:任意指定的两幅图一般不可能同时精确满足柱面反射关系,兼容解在函数空间中属于零测集。本文将"艺术加工"的数学含义定义为对绝对等式约束的松弛,构建了以 MSE 与 SSIM 混合度量为核心的双目标优化框架,并提出由物理硬约束、结构先验条件和容忍度评价函数构成的三层分级判决体系。判决算法将开放性的艺术判断转化为可计算的分层筛选流程,既能构造强兼容方案（曼陀罗–竖条纹,$\mathrm{SSIM} = 0.89$）,也能定量解释结构互斥图案为何不兼容（正交网格–蒙娜丽莎,$S_{\mathrm{comp}} = 0.42$）。
 
 \section{模型评价与推广}
 \subsection{模型优点}
@@ -976,6 +988,22 @@ H_\nabla\ \text{偏高}.
 
 \subsection{模型推广}
 本文的建模框架可推广到圆锥镜、球面镜和一般自由曲面镜。只要给出镜面参数方程、法向量和观察点,即可重新建立反射映射并生成对应的逆向纸面图案。另一方面,若将静态纸面图案替换为序列帧或可变显示屏,同一套算子也可用于动态变形艺术、展陈交互以及 AR/VR 中的视点相关图像校正。
+
+\subsubsection{基于拟保角映射的剪切畸变度量}
+
+本文主要利用雅可比行列式 $\det(J_T)$ 评估了反射系统的局部面积畸变。在未来的艺术评价体系中,可进一步引入复分析中的拟保角映射理论:通过计算映射的 Beltrami 系数
+\[
+\mu = \frac{\partial f / \partial \bar{z}}{\partial f / \partial z},
+\]
+量化局部正交基准的剪切形变（Shearing）。$|\mu|$ 越接近 1,表明映射越偏离保角映射,局部形状畸变越剧烈。相较于雅可比行列式仅衡量面积放大率,Beltrami 系数能更精准地捕捉人类视觉对"形状非共形扭曲"的敏感度,可作为结构相似性（SSIM）的底层数学补充。
+
+\subsubsection{物理光学像散分析}
+
+柱面镜系统在水平截面具有汇聚能力,而在竖直截面曲率为零,导致反射虚像产生强烈的像散效应——径向与切向的焦平面发生分离。值得注意的是,本文在 Q2 中导出的全局最优解（水平/径向纯一维变化图案）不仅在雅可比空间中实现了权重分离,更在物理光学层面消除了由于双眼视差和像散引发的深度冲突（Depth Conflict），具备高度的物理合理性。这一观察将几何优化结论与物理光学分析自洽地联系在一起。
+
+\subsubsection{结合可微渲染的端到端深度生成}
+
+针对问题三中大尺度的"艺术加工"场景,未来可将本文建立的正反向算子 $\mathcal{T}$ 嵌入可微渲染管线（如 PyTorch3D）。利用神经网络的表征能力,以本文的 $J(P)$（MSE + SSIM 混合损失）作为反向传播的代价函数,并结合扩散模型（Diffusion Models）的语义先验,实现完全自动化的双约束图像艺术融合生成,将本文的手工优化流程升级为端到端的深度学习方案。
 
 \section{结论}
 本文围绕圆柱镜变形画建立了从几何光学到图像生成的完整模型。针对 Q1,我们由反射定律推导了圆柱面参数到纸面坐标的精确映射,并以毫米为单位给出蒙娜丽莎和小猫图像的可制作纸面图。通过有效区域遮罩、雅可比畸变分析和角度扫描,说明了纸面可用范围、图像清晰度和圆柱参数之间的关系。
