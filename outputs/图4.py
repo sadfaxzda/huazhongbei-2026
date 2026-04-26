@@ -36,6 +36,7 @@ z_max = 80.9       # mm, top of pattern (from aspect-ratio constraint)
 # 2. Load Cat Reference Image
 # ============================================================
 ref_candidates = [
+    "data/reference/图4.png",
     "huazhongbei-2026/data/reference/图4.png",
     "附件/图4.png",
     "cartoon_cat.jpg",
@@ -46,6 +47,8 @@ for p in ref_candidates:
     if os.path.exists(p):
         ref_path = p
         break
+if ref_path is None:
+    raise FileNotFoundError("Cannot find cat reference image.")
 
 img = Image.open(ref_path).convert("RGB")
 print(f"[INFO] Image: {ref_path}, size: {img.size}")
@@ -127,8 +130,8 @@ for c in range(3):
 paper_img_phys = np.flipud(paper_img)
 
 paper_out = (np.clip(paper_img_phys, 0, 1) * 255).astype(np.uint8)
-Image.fromarray(paper_out).save("cat_paper_pattern.png")
-print("[INFO] Saved: cat_paper_pattern.png")
+Image.fromarray(paper_out).save("outputs/figures/draft/cat_paper_pattern_teammate.png")
+print("[INFO] Saved: outputs/figures/draft/cat_paper_pattern_teammate.png")
 
 # ============================================================
 # 6. Mirror Simulation
@@ -138,8 +141,8 @@ sampler = LinearNDInterpolator(points, colors, fill_value=1.0)
 mirror_colors = sampler(points).reshape(n_z, n_theta, 3)
 mirror_colors = np.clip(mirror_colors, 0, 1)
 
-Image.fromarray((mirror_colors * 255).astype(np.uint8)).save("cat_mirror_sim.png")
-print("[INFO] Saved: cat_mirror_sim.png")
+Image.fromarray((mirror_colors * 255).astype(np.uint8)).save("outputs/figures/draft/cat_mirror_sim_teammate.png")
+print("[INFO] Saved: outputs/figures/draft/cat_mirror_sim_teammate.png")
 
 # ============================================================
 # 7. Annotated Paper Pattern
@@ -208,8 +211,8 @@ ax_paper.text(-A4_W/2 - 16, (grid_y_top + grid_y_bot) / 2, "210 mm",
               bbox=dict(facecolor='white', edgecolor='none', alpha=0.7, pad=1))
 
 plt.tight_layout()
-plt.savefig("cat_annotated_paper.png", dpi=350)
-print("[INFO] Saved: cat_annotated_paper.png")
+plt.savefig("outputs/figures/draft/cat_annotated_paper_teammate.png", dpi=350)
+print("[INFO] Saved: outputs/figures/draft/cat_annotated_paper_teammate.png")
 plt.close()
 
 # ============================================================
@@ -259,8 +262,8 @@ axes[1, 1].text(0.1, 0.9, info, transform=axes[1, 1].transAxes,
             bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
 
 plt.tight_layout()
-plt.savefig("cat_composite.png", dpi=200)
-print("[INFO] Saved: cat_composite.png")
+plt.savefig("outputs/figures/draft/cat_composite_teammate.png", dpi=200)
+print("[INFO] Saved: outputs/figures/draft/cat_composite_teammate.png")
 plt.close()
 
 # ============================================================

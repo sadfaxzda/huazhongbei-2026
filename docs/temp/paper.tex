@@ -11,8 +11,41 @@
 
 \begin{document}
 
+\begin{titlepage}
+\centering
+\vspace*{1.8cm}
+
+{\zihao{2}\bfseries 华中杯大学生数学建模挑战赛论文\par}
+
+\vspace{2.2cm}
+
+{\zihao{1}\bfseries 反射的艺术:柱面镜变形图案的几何建模与兼容性分析\par}
+
+\vspace{2.0cm}
+
+{\zihao{3}\bfseries B 题\par}
+
+\vfill
+
+\begin{tabular}{rl}
+\zihao{4}\bfseries 参赛队号: & \zihao{4}\underline{\hspace{6cm}} \\[0.8cm]
+\zihao{4}\bfseries 队员姓名: & \zihao{4}\underline{\hspace{6cm}} \\[0.8cm]
+\zihao{4}\bfseries 学校名称: & \zihao{4}\underline{\hspace{6cm}} \\
+\end{tabular}
+
+\vfill
+
+{\zihao{4}2026 年 4 月\par}
+\end{titlepage}
+
 \begin{abstract}
-本文研究圆柱镜反射变形画的纸面图案设计问题。首先基于几何光学反射定律建立镜面参数域到 A4 纸面坐标的精确映射,以毫米为统一单位反求蒙娜丽莎与小猫两组目标图案的可打印纸面图;随后将纸面区域分解为反射有效区与自由设计区,提出纸面图案和镜面图案同时具有艺术意义时的频域兼容判据;最后针对纸面目标与镜面目标同时指定的情形,给出由可视区域、拓扑结构、尺度密度、频域方向和视觉误差组成的分层判决方法。数值实验表明,蒙娜丽莎方案在 $R=35\,\mathrm{mm}$、$H_c=90\,\mathrm{mm}$、张角 $180^\circ$ 下可恢复目标肖像,小猫方案在 $R=50\,\mathrm{mm}$、$H_c=86\,\mathrm{mm}$、张角 $170^\circ$ 下具有更高的宽幅适配性;Q2/Q3 的实验进一步说明低频、方向结构清晰的图案更易形成双意义兼容作品。
+本文研究圆柱镜反射变形画的纸面图案设计问题。针对该类作品中纸面图案、圆柱镜参数与观察视点之间的强耦合关系,本文以毫米为统一单位,基于几何光学反射定律建立镜面参数域 $(\theta,z)$ 到 A4 纸面坐标 $(u,v)$ 的精确映射,并据此形成由目标镜面图案反求可打印纸面图案的计算流程。
+
+针对问题一,本文将圆柱镜面离散为规则的 $(\theta,z)$ 网格,对每个镜面采样点沿反射光路追踪至纸面,再利用自然邻域插值生成 A4 纸面畸变图案。对蒙娜丽莎图像,采用 $R=35\,\mathrm{mm}$、$D=250\,\mathrm{mm}$、$z_E=350\,\mathrm{mm}$、$H_c=90\,\mathrm{mm}$、总张角 $180^\circ$ 的方案,纸面投影范围约为 $u\in[-96,96]\,\mathrm{mm}$、$v\in[-79,103]\,\mathrm{mm}$,有效覆盖率约为 $38.8\%$。对卡通猫图像,采用 $R=50\,\mathrm{mm}$、$D=280\,\mathrm{mm}$、$z_E=350\,\mathrm{mm}$、$H_c=86\,\mathrm{mm}$、总张角 $170^\circ$ 的方案,纸面投影范围约为 $u\in[-109.5,109.5]\,\mathrm{mm}$、$v\in[-99.5,99.5]\,\mathrm{mm}$,有效覆盖率约为 $44.2\%$。正向重建结果表明,两组纸面图案均能在柱面镜中恢复为可辨识的目标图像。
+
+针对问题二,本文将 A4 纸面分解为反射有效区 $\mathcal I_{\mathrm{vis}}$、圆柱遮挡盲区和自由设计区 $\mathcal I_{\mathrm{free}}$,指出未指定镜面图案时,反射有效区和自由设计区均可主动设计,因此必然存在纸面与镜面均有意义的构造。进一步利用纸面极坐标频谱与镜面 $(\theta,z)$ 频谱之间的方向对应关系,得到"纸面径向结构对应镜面横向条纹、纸面角向结构对应镜面竖向纹理"的设计判据。数值实验中,同心彩虹环纸面图案可稳定生成水平彩虹条纹镜面图案,冲突度量约为 $\Phi_{\min}=0.024$。当镜面图案已指定时,反射有效区被 $G\circ T$ 锁定,可行性取决于指定图案的支撑面积、梯度复杂度和边界可延展性;低频色带和粗轮廓图案较易兼容,高频照片和复杂自然纹理通常不兼容。
+
+针对问题三,本文证明任意指定的纸面目标 $P^*$ 与镜面目标 $M^*$ 一般不能同时精确满足同一柱面反射算子,其精确兼容条件为 $P^*=\mathcal T^{-1}(M^*)$,在图像函数空间中属于极低概率事件。为处理允许艺术加工的情形,本文建立双目标优化模型,并提出由可视区域、拓扑结构、尺度密度、频域方向和视觉误差组成的分层判决方法。结论表明,只有当两幅目标图在反投影后保持相近的连通结构、空间频率和方向谱特征时,才可能通过有限加工得到弱兼容或强兼容作品;否则强行叠加会同时破坏纸面图案和镜面图案的可读性。
 
 \textbf{关键词:} 柱面反射变形;几何光学;逆向光线追踪;纸面图案生成;兼容性判据
 \end{abstract}
@@ -571,8 +604,8 @@ z\in[0.2,84]\ \mathrm{mm}.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.94\textwidth]{../../outputs/figures/draft/q1_monalisa_teammate_result.png}
-\caption{蒙娜丽莎案例：左为按本文参数生成的 A4 纸面畸变图案，右为柱面展开坐标下的镜面恢复效果。}
+\includegraphics[width=0.94\textwidth]{../../outputs/figures/draft/q1_monalisa_result_final.png}
+\caption{蒙娜丽莎案例的 A4 纸面畸变图案与镜面重建结果}
 \label{fig:q1-monalisa-result}
 \end{figure}
 
@@ -600,8 +633,8 @@ z\in[0.2,80.9]\ \mathrm{mm},
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.94\textwidth]{../../outputs/figures/draft/q1_cat_teammate_result.png}
-\caption{卡通猫案例：左为按本文参数生成的 A4 纸面畸变图案，右为柱面展开坐标下的镜面恢复效果。}
+\includegraphics[width=0.94\textwidth]{../../outputs/figures/draft/q1_cat_result_final.png}
+\caption{卡通猫案例的 A4 纸面畸变图案与镜面重建结果}
 \label{fig:q1-cat-result}
 \end{figure}
 
@@ -706,6 +739,27 @@ F_{\mathrm{hidden}}(u,v), &(u,v)\in \mathcal I_{\mathrm{free}} .
 
 据此,Q2 的两个子问题具有不同自由度。若镜面图案未指定,则 $F_{\mathrm{eff}}$ 与 $F_{\mathrm{hidden}}$ 均可设计,只需保证两区域在视觉上连续衔接,因此必然存在可行解。若镜面图案已指定,则 $F_{\mathrm{eff}}=G\circ T$ 被完全锁定,问题退化为带硬边界条件的图像补全问题:只有当被锁定的畸变片段能被自由区自然吸收时,纸面整体才可能具有独立意义。
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{../../outputs/q2_region_decomposition.png}
+\caption{Q2 中纸面反射有效区、圆柱遮挡盲区与自由设计区的几何分解}
+\label{fig:q2-region-decomposition}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Q2 两个子情形的自由度对比}
+\label{tab:q2-ab-compare}
+\begin{tabularx}{\textwidth}{lXXX}
+\toprule
+\textbf{情形} & \textbf{$F_{\mathrm{eff}}$} & \textbf{$F_{\mathrm{hidden}}$} & \textbf{可行性来源} \\
+\midrule
+镜面图案未指定 & 可由设计者选择 & 可由设计者选择 & 两区域均可统一规划,必然存在构造解 \\
+镜面图案已指定 & 被 $G\circ T$ 锁定 & 仍可自由补全 & 取决于指定镜面图案的复杂度和边界可延展性 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \subsection{对称性理论:纸面-镜面图案的频域对应}
 为给出可操作的设计原则,本文利用纸面极坐标 $(\rho,\phi)$ 与镜面柱面坐标 $(\theta,z)$ 之间的方向对应关系。由式(3.4)可知,在 $D\gg R$ 的通常观察条件下,映射 $T:(\theta,z)\mapsto(\rho,\phi)$ 的雅可比矩阵近似为对角主导:
 \[
@@ -741,6 +795,8 @@ E_G^{\mathrm{vert}}\approx \kappa_2 E_F^{\mathrm{rad}},
 \end{itemize}
 该频域对应关系解释了为什么纸面图案与镜面图案可以内容独立但结构相关:两者不必在语义上相同,只需在几何方向和频谱能量上互相兼容。
 
+由此可得到 Q2(a) 的构造性充分条件:若纸面图案在极坐标下具有稳定的单方向主频结构,且该结构在 $\mathcal I_{\mathrm{vis}}$ 边界附近连续,则其镜面图案在 $(\theta,z)$ 坐标下会形成规则横纹、竖纹或网格纹理。该条件并不要求纸面图案和镜面图案语义一致,只要求二者在柱面反射算子下具有相容的方向频谱。
+
 \subsection{子问题 (a):纸面与镜面均有意义、相互独立}
 在不指定镜面图案时,可先设计一幅完整纸面图案 $F$,再由 $G=F\circ T^{-1}$ 得到镜面图案。此时纸面有意义由设计者直接保证,镜面有意义则由频域方向对应来筛选。本文采用如下构造流程:
 \begin{enumerate}
@@ -767,6 +823,21 @@ W_J(\theta,z)=
 \subsubsection{候选图案库}
 本文构造了十类候选纸面图案:同心圆环彩虹、八瓣曼陀罗、多角星放射纹、对数螺旋、向日葵螺旋、蔷薇花形、齿轮图案、同心靶环、年轮纹理和 Voronoi 随机图。其结构覆盖径向主导、角向主导、混合型和各向同性随机型四类。
 
+\begin{table}[htbp]
+\centering
+\caption{Q2(a) 推荐候选图案的方向结构分类}
+\label{tab:q2-pattern-library}
+\begin{tabularx}{\textwidth}{lXX}
+\toprule
+\textbf{类别} & \textbf{角向结构图案} & \textbf{径向结构图案} \\
+\midrule
+几何对称 & 曼陀罗、万花筒、星形多边形 & 靶环、同心圆、斐波那契螺旋 \\
+自然纹理 & 向日葵头状花序、海星形纹理 & 树木年轮、水波涟漪、洋葱截面 \\
+人工设计 & 齿轮、风扇叶片、旋涡标志 & 唱片纹路、同心彩虹环、阶梯式环带 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \subsubsection{实验结果与筛选}
 数值实验表明,同心圆环彩虹是最稳定的构造。其纸面图案可写为
 \[
@@ -781,13 +852,13 @@ G(\theta,z)\approx C\!\left(\frac{z-z_{\min}}{z_{\max}-z_{\min}}\right),
 \[
 \Phi_{\min}=0.024,
 \]
-显著低于随机纹理方案。对比实验中,同心靶环和年轮纹理同样产生较清晰的水平分层带;曼陀罗、齿轮和放射纹则产生竖向条纹;Voronoi 随机图在镜面上呈无规律噪声,不宜采用。图~\ref{fig:q2q3-compatibility-examples} 给出了兼容构造与冲突反例的可视化对比。由此可知,子问题(a)不仅存在可行解,而且可通过频域结构预判系统地构造。
+显著低于随机纹理方案。对比实验中,同心靶环和年轮纹理同样产生较清晰的水平分层带;曼陀罗、齿轮和放射纹则产生竖向条纹;Voronoi 随机图在镜面上呈无规律噪声,不宜采用。图~\ref{fig:q2a-best-case} 给出了同心彩虹环方案的纸面图、镜面条纹和重建结果。由此可知,子问题(a)不仅存在可行解,而且可通过频域结构预判系统地构造。
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.88\textwidth]{../../outputs/5.4.png}
-\caption{Q2/Q3 中的兼容与不兼容结构示例。左侧为纸面曼陀罗与镜面条纹的低冲突组合,右侧为规则网格与目标结构不匹配时形成的冲突区域。}
-\label{fig:q2q3-compatibility-examples}
+\includegraphics[width=0.94\textwidth]{../../outputs/q2a_best_case.png}
+\caption{Q2(a) 中同心彩虹环纸面图案与水平彩虹条纹镜面图案的强兼容构造}
+\label{fig:q2a-best-case}
 \end{figure}
 
 \subsection{子问题 (b):指定镜面图案、纸面也有意义}
@@ -804,6 +875,21 @@ H_\nabla(G)<H_\nabla^* .
 \iint_{\operatorname{supp}(G)} |J_T(\theta,z)|\,\mathrm d\theta\mathrm dz
 \]
 为镜面图案投影到纸面后的空间占比,$H_\nabla(G)$ 为畸变纸面片段的梯度方向熵。若 $\eta_A$ 过大,自由设计区不足;若 $H_\nabla$ 过大,边界过于杂乱,无法通过艺术补全形成自然整体。
+
+\begin{table}[htbp]
+\centering
+\caption{指定镜面图案的视觉类型与 Q2(b) 可行性}
+\label{tab:q2b-feasibility}
+\begin{tabularx}{\textwidth}{XXX}
+\toprule
+\textbf{镜面图案类型} & \textbf{纸面有效区畸变特征} & \textbf{可行性判断} \\
+\midrule
+粗轮廓、大色块、低频结构 & 主要表现为连续色块的拉伸和弯曲 & 较易补全,可通过顺势延伸形成纸面整体图案 \\
+单方向条纹或渐变 & 方向清晰,边界规则,梯度熵低 & 强兼容,适合作为 Q2(b) 指定图案 \\
+高频照片、复杂自然纹理 & 多方向碎片化,局部细节密度高 & 通常不兼容,自由区难以吸收畸变片段 \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsubsection{可视盲区的几何推导}
 纸面上首先存在圆柱实体造成的绝对盲区:
@@ -834,6 +920,13 @@ H_\nabla(G)<H_\nabla^* .
 
 以蒙娜丽莎为指定镜面图案时,肖像中的五官、衣纹和背景具有多方向高频梯度。其投影占比和梯度熵均显著高于色带图案,自由区难以将这些碎片化畸变自然补全为另一幅独立纸面作品。因此,在不进行大幅简化的前提下,该类复杂照片更适合作为 Q1 的指定镜面成像任务,不适合作为 Q2(b) 的双意义纸面设计对象。
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{../../outputs/q2b_compatibility_contrast_crop.png}
+\caption{Q2(b) 中低频单方向结构与多方向高频结构的兼容性对比}
+\label{fig:q2b-compatibility-contrast}
+\end{figure}
+
 \subsection{本章小结}
 问题二的结论如下:不指定镜面图案时,由于反射有效区和自由设计区均可主动规划,必然存在纸面与镜面均有意义的设计;其中同心圆环彩虹与镜面水平彩虹条纹构成稳定且冲突度最低的方案。指定镜面图案时,可行性不再必然成立,需同时满足支撑集、空间占比和梯度复杂度约束。低频色带、粗线条几何图案较易兼容,高频照片和复杂自然纹理通常不兼容。
 
@@ -842,7 +935,7 @@ H_\nabla(G)<H_\nabla^* .
 
 \subsubsection{物理映射的刚性约束}
 
-在柱面反射变形艺术中,纸面图案函数 $P(u,v)$ 与观察者感知的镜面图案函数 $M(\theta,z)$ 通过几何光学算子 $\mathcal{T}$ 发生物理关联:
+在柱面反射变形艺术中,纸面图案与镜面图案并非相互独立。记纸面函数为 $P(u,v)$,观察者感知的镜面函数为 $M(\theta,z)$,二者通过几何光学算子 $\mathcal{T}$ 发生物理关联:
 \[
 M = \mathcal{T}(P), \qquad \mathcal{T}: L^2(\Omega_P) \to L^2(\Omega_M).
 \]

@@ -36,9 +36,14 @@ z_max = 84.0       # mm, top of pattern (within cylinder height)
 # ============================================================
 # 2. Load Reference Image
 # ============================================================
-ref_path = "huazhongbei-2026/data/reference/图3.png"
-if not os.path.exists(ref_path):
-    ref_path = "monalisa.jpg"
+ref_candidates = [
+    "data/reference/图3.png",
+    "huazhongbei-2026/data/reference/图3.png",
+    "monalisa.jpg",
+]
+ref_path = next((p for p in ref_candidates if os.path.exists(p)), None)
+if ref_path is None:
+    raise FileNotFoundError("Cannot find Mona Lisa reference image.")
 
 img = Image.open(ref_path).convert("RGB")
 print(f"[INFO] Image size: {img.size}")
@@ -136,8 +141,8 @@ paper_img_phys = np.flipud(paper_img)
 
 # Save raw PNG (already correctly oriented)
 paper_out = (np.clip(paper_img_phys, 0, 1) * 255).astype(np.uint8)
-Image.fromarray(paper_out).save("monalisa_paper_pattern.png")
-print("[INFO] Saved: monalisa_paper_pattern.png")
+Image.fromarray(paper_out).save("outputs/figures/draft/monalisa_paper_pattern_teammate.png")
+print("[INFO] Saved: outputs/figures/draft/monalisa_paper_pattern_teammate.png")
 
 # ============================================================
 # 6. Mirror Simulation: what observer sees on the cylinder
@@ -147,8 +152,8 @@ sampler = LinearNDInterpolator(points, colors, fill_value=1.0)
 mirror_colors = sampler(points).reshape(n_z, n_theta, 3)
 mirror_colors = np.clip(mirror_colors, 0, 1)
 
-Image.fromarray((mirror_colors * 255).astype(np.uint8)).save("monalisa_mirror_sim.png")
-print("[INFO] Saved: monalisa_mirror_sim.png")
+Image.fromarray((mirror_colors * 255).astype(np.uint8)).save("outputs/figures/draft/monalisa_mirror_sim_teammate.png")
+print("[INFO] Saved: outputs/figures/draft/monalisa_mirror_sim_teammate.png")
 
 # ============================================================
 # 7. Annotated Paper Pattern (for the paper / report)
@@ -227,8 +232,8 @@ ax_paper.text(-A4_W/2 - 16, (grid_y_top + grid_y_bot) / 2, "210 mm",
               bbox=dict(facecolor='white', edgecolor='none', alpha=0.7, pad=1))
 
 plt.tight_layout()
-plt.savefig("monalisa_annotated_paper.png", dpi=350)
-print("[INFO] Saved: monalisa_annotated_paper.png")
+plt.savefig("outputs/figures/draft/monalisa_annotated_paper_teammate.png", dpi=350)
+print("[INFO] Saved: outputs/figures/draft/monalisa_annotated_paper_teammate.png")
 plt.close()
 
 # ============================================================
@@ -282,8 +287,8 @@ axes[1, 1].text(0.1, 0.9, info, transform=axes[1, 1].transAxes,
             bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
 
 plt.tight_layout()
-plt.savefig("monalisa_composite.png", dpi=200)
-print("[INFO] Saved: monalisa_composite.png")
+plt.savefig("outputs/figures/draft/monalisa_composite_teammate.png", dpi=200)
+print("[INFO] Saved: outputs/figures/draft/monalisa_composite_teammate.png")
 plt.close()
 
 # ============================================================
