@@ -1,10 +1,8 @@
 function generate_cat_perfect_layout()
-    % 注：当前按 130° 张角生成，用于大张角对照实验
-
     % 1. 以圆心为原点的小猫专属参数（单位：mm）
-    R = 35; D = 250; zE = 350;
-    z_min = 2; z_max = 90;
-    theta_max = 13 * pi / 18;  % 130度张角
+    R = 50; D = 280; zE = 350;
+    z_min = 0.2; z_max = 80.9;
+    theta_max = 17 * pi / 18;  % 170度张角
 
     img = imread('/Users/zhangchunhe/Desktop/mathmodel/data/reference/图4.png');
     img = im2double(img);
@@ -33,8 +31,8 @@ function generate_cat_perfect_layout()
     y_paper = rho .* cos(phi);
     
     % 3. 生成 A4 横向画布 (X:[-148.5, 148.5], Y:[160, -50])，单位：mm
-    disp('正在执行 130° 平滑插值...');
-    [grid_x, grid_y] = meshgrid(linspace(-148.5, 148.5, 2970), linspace(160, -50, 2100));
+    disp('正在执行 170° 平滑插值...');
+    [grid_x, grid_y] = meshgrid(linspace(-148.5, 148.5, 2970), linspace(125, -85, 2100));
     
     grid_colors = ones(2100, 2970, 3);
     F_R = scatteredInterpolant(x_paper, y_paper, R_chan, 'natural', 'none');
@@ -62,7 +60,7 @@ function generate_cat_perfect_layout()
     
     % 标尺坐标 (1mm = 10像素)
     px_x = 1485; 
-    px_y = 1600; 
+    px_y = 1250;
     r_px = R * 10;
     axis_color = [0.4 0.4 0.4];
     
@@ -74,7 +72,7 @@ function generate_cat_perfect_layout()
     for mm = -100:50:100
         plot([px_x + mm*10, px_x + mm*10], [px_y - 20, px_y + 20], 'Color', axis_color, 'LineWidth', 2);
     end
-    for mm = -50:50:150
+    for mm = -80:40:120
         plot([px_x - 20, px_x + 20], [px_y - mm*10, px_y - mm*10], 'Color', axis_color, 'LineWidth', 2);
     end
     
@@ -89,5 +87,5 @@ function generate_cat_perfect_layout()
     
     print(f, '/Users/zhangchunhe/Desktop/mathmodel/outputs/figures/draft/p4_2D_matlab.jpg', '-djpeg', '-r300');
     close(f);
-    disp('成功！已生成 130° 张角小猫图纸！');
+    disp('成功！已生成 170° 张角小猫图纸！');
 end

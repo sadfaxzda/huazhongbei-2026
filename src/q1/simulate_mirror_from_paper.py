@@ -9,15 +9,25 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[2]
 FIG_DIR = ROOT / "outputs" / "figures" / "draft"
 
-R = 35.0
-D = 250.0
-ZE = 350.0
-THETA_MAX = 13.0 * np.pi / 18.0
-
 PAPER_X_MIN = -148.5
 PAPER_X_MAX = 148.5
-PAPER_Y_TOP = 160.0
-PAPER_Y_BOTTOM = -50.0
+
+CASES = {
+    "p3": {
+        "R": 35.0, "D": 250.0, "ZE": 350.0,
+        "theta_max": np.pi,
+        "z_min": 0.2, "z_max": 84.0,
+        "y_top": 130.0, "y_bottom": -80.0,
+        "height": 1200, "width": 800,
+    },
+    "p4": {
+        "R": 50.0, "D": 280.0, "ZE": 350.0,
+        "theta_max": 17.0 * np.pi / 18.0,
+        "z_min": 0.2, "z_max": 80.9,
+        "y_top": 125.0, "y_bottom": -85.0,
+        "height": 800, "width": 600,
+    },
+}
 
 
 def bilinear_sample(image: np.ndarray, col: np.ndarray, row: np.ndarray) -> np.ndarray:
@@ -41,7 +51,10 @@ def bilinear_sample(image: np.ndarray, col: np.ndarray, row: np.ndarray) -> np.n
     return out
 
 
-def paper_coordinates(theta: np.ndarray, z: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def paper_coordinates(
+    theta: np.ndarray, z: np.ndarray, cfg: dict
+) -> tuple[np.ndarray, np.ndarray]:
+    R, D, ZE = cfg["R"], cfg["D"], cfg["ZE"]
     alpha = (ZE - 2.0 * z) / (ZE - z)
     beta = z / (ZE - z)
 
@@ -57,7 +70,8 @@ def paper_coordinates(theta: np.ndarray, z: np.ndarray) -> tuple[np.ndarray, np.
     return rho * np.sin(phi), rho * np.cos(phi)
 
 
-def simulate(case: str, z_min: float, z_max: float, height: int, width: int) -> Path:
+def simulate(case: str) -> Path:
+    cfg = CASES[case]
     paper_path = FIG_DIR / f"{case}_2D_clean.png"
     if not paper_path.exists():
         paper_path = FIG_DIR / f"{case}_2D_matlab.jpg"
@@ -66,13 +80,13 @@ def simulate(case: str, z_min: float, z_max: float, height: int, width: int) -> 
     paper = np.asarray(Image.open(paper_path).convert("RGB"), dtype=np.float32) / 255.0
     paper_h, paper_w, _ = paper.shape
 
-    theta = np.linspace(-THETA_MAX / 2.0, THETA_MAX / 2.0, width)
-    z = np.linspace(z_max, z_min, height)
+    theta = np.linspace(-cfg["theta_max"] / 2.0, cfg["theta_max"] / 2.0, cfg["width"])
+    z = np.linspace(cfg["z_max"], cfg["z_min"], cfg["height"])
     theta_grid, z_grid = np.meshgrid(theta, z)
 
-    x_paper, y_paper = paper_coordinates(theta_grid, z_grid)
+    x_paper, y_paper = paper_coordinates(theta_grid, z_grid, cfg)
     col = (x_paper - PAPER_X_MIN) / (PAPER_X_MAX - PAPER_X_MIN) * (paper_w - 1)
-    row = (PAPER_Y_TOP - y_paper) / (PAPER_Y_TOP - PAPER_Y_BOTTOM) * (paper_h - 1)
+    row = (cfg["y_top"] - y_paper) / (cfg["y_top"] - cfg["y_bottom"]) * (paper_h - 1)
 
     mirror = bilinear_sample(paper, col, row)
     mirror_u8 = np.clip(mirror * 255.0, 0, 255).astype(np.uint8)
@@ -80,9 +94,8 @@ def simulate(case: str, z_min: float, z_max: float, height: int, width: int) -> 
     return out_path
 
 
-def render_perspective(
-    case: str, z_min: float, z_max: float, size: int = 1200, supersample: int = 2
-) -> Path:
+def render_perspective(case: str, size: int = 1200, supersample: int = 2) -> Path:
+    cfg = CASES[case]
     paper_path = FIG_DIR / f"{case}_2D_clean.png"
     if not paper_path.exists():
         paper_path = FIG_DIR / f"{case}_2D_matlab.jpg"
@@ -90,6 +103,10 @@ def render_perspective(
 
     paper = np.asarray(Image.open(paper_path).convert("RGB"), dtype=np.float32) / 255.0
     paper_h, paper_w, _ = paper.shape
+
+    R, D, ZE = cfg["R"], cfg["D"], cfg["ZE"]
+    z_min, z_max = cfg["z_min"], cfg["z_max"]
+    theta_max = cfg["theta_max"]
 
     eye = np.array([0.0, D, ZE], dtype=np.float64)
     look_at = np.array([0.0, 0.0, 0.5 * (z_min + z_max)], dtype=np.float64)
@@ -108,7 +125,6 @@ def render_perspective(
     dirs = forward + sx[..., None] * right + sy[..., None] * up
     dirs /= np.linalg.norm(dirs, axis=2, keepdims=True)
 
-    # Intersect eye rays with the cylinder x^2 + y^2 = R^2.
     a = dirs[..., 0] ** 2 + dirs[..., 1] ** 2
     b = 2.0 * (eye[0] * dirs[..., 0] + eye[1] * dirs[..., 1])
     c = eye[0] ** 2 + eye[1] ** 2 - R**2
@@ -127,13 +143,13 @@ def render_perspective(
         hit
         & (z >= z_min)
         & (z <= z_max)
-        & (theta >= -THETA_MAX / 2.0)
-        & (theta <= THETA_MAX / 2.0)
+        & (theta >= -theta_max / 2.0)
+        & (theta <= theta_max / 2.0)
     )
 
-    x_paper, y_paper = paper_coordinates(theta, z)
+    x_paper, y_paper = paper_coordinates(theta, z, cfg)
     col = (x_paper - PAPER_X_MIN) / (PAPER_X_MAX - PAPER_X_MIN) * (paper_w - 1)
-    row = (PAPER_Y_TOP - y_paper) / (PAPER_Y_TOP - PAPER_Y_BOTTOM) * (paper_h - 1)
+    row = (cfg["y_top"] - y_paper) / (cfg["y_top"] - cfg["y_bottom"]) * (paper_h - 1)
     sampled = bilinear_sample(paper, col, row)
 
     light_dir = np.array([0.0, 1.0, 0.35], dtype=np.float64)
@@ -155,10 +171,10 @@ def render_perspective(
 
 def main() -> None:
     outputs = [
-        simulate("p3", z_min=2.0, z_max=120.0, height=1200, width=800),
-        simulate("p4", z_min=2.0, z_max=90.0, height=800, width=600),
-        render_perspective("p3", z_min=2.0, z_max=120.0),
-        render_perspective("p4", z_min=2.0, z_max=90.0),
+        simulate("p3"),
+        simulate("p4"),
+        render_perspective("p3"),
+        render_perspective("p4"),
     ]
     for path in outputs:
         print(path)

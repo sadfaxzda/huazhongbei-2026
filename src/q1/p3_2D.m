@@ -1,8 +1,8 @@
 function generate_monalisa_perfect_layout()
     % 1. 以圆心为原点的参数（单位：mm）
     R = 35; D = 250; zE = 350;
-    z_min = 2; z_max = 120; % 紧贴底面起步
-    theta_max = 13 * pi / 18;  % 130度张角
+    z_min = 0.2; z_max = 84;
+    theta_max = pi;            % 180度张角，覆盖前半圆柱面
     
     img = imread('/Users/zhangchunhe/Desktop/mathmodel/data/reference/图3.png');
     img = im2double(img);
@@ -32,7 +32,7 @@ function generate_monalisa_perfect_layout()
     
     % 3. 生成 A4 横向画布 (X:[-148.5, 148.5], Y:[160, -50])，单位：mm
     disp('正在执行极致铺开插值...');
-    [grid_x, grid_y] = meshgrid(linspace(-148.5, 148.5, 2970), linspace(160, -50, 2100));
+    [grid_x, grid_y] = meshgrid(linspace(-148.5, 148.5, 2970), linspace(130, -80, 2100));
     
     grid_colors = ones(2100, 2970, 3);
     F_R = scatteredInterpolant(x_paper, y_paper, R_chan, 'natural', 'none');
@@ -60,7 +60,7 @@ function generate_monalisa_perfect_layout()
     
     % 标尺坐标 (1mm = 10像素)
     px_x = 1485; 
-    px_y = 1600; 
+    px_y = 1300;
     r_px = R * 10;
     
     % 画轴与圆
