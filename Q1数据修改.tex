@@ -1,0 +1,112 @@
+\documentclass[12pt,a4paper]{ctexart}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs,array}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{caption}
+
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\setcounter{section}{3}
+
+\begin{document}
+
+\renewcommand\thesubsection{\arabic{section}.\arabic{subsection}}
+
+\subsection{案例一：图3 蒙娜丽莎设计方案}
+
+图3为写实肖像图像，面部、发丝和背景的灰度层次较多，对切向拉伸和径向压缩均较敏感。为保证镜面观察时人物主体仍保持可辨识，本文采用较高的镜面采样密度，并将圆柱半径、观察距离和观察高度统一固定为
+
+\[
+R = 35.0\ \text{mm},\quad D = 250\ \text{mm},\quad H = 350\ \text{mm}.
+\]
+
+圆柱物理高度取 $H_c = 90\ \text{mm}$，镜面图像有效高度区间为
+
+\[
+z \in [2,\ 84]\ \text{mm}.
+\]
+
+其中 $z_{\min}=2\ \text{mm}$ 用于避开底部 $z=0$ 附近的投影退化区，$z_{\max}=84\ \text{mm}$ 明显低于观察点高度 $H$，可避免 $z \to H$ 时纸面投影发散。
+
+在角度设置上，采用完整的矢量反射映射公式，镜面半张角取
+
+\[
+\Delta\theta = 90.0^\circ,\quad \theta \in [0^\circ,\ 180^\circ],
+\]
+
+覆盖整个前半圆柱面，使面部细节充分展开。镜面参数域被离散为 $240 \times 160$ 个采样点，经逆向光线映射后在 $2970 \times 2100$ 的横向A4画布上进行自然邻域插值，得到可打印纸面图案。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{monalisa_annotated_paper.png}
+\caption{蒙娜丽莎案例的纸面畸变图案（带标注）}
+\label{fig:monalisa_q1}
+\end{figure}
+
+数值验证表明，在上述参数下，蒙娜丽莎案例的纸面投影范围约为
+
+\[
+x \in [-96,\ 96]\ \text{mm},\quad y \in [-79,\ 103]\ \text{mm}.
+\]
+
+全部映射点均落在A4幅面范围内，覆盖率为 $38.8\%$。由于观察高度 $H \gg z_{\max}$，映射稳定、无奇异点。圆柱轴线位于A4纸面中心附近，对应物理坐标为 $(148.5,\ 80)\ \text{mm}$（以A4左下角为原点）。
+
+\subsection{案例二：图4 卡通猫设计方案}
+
+图4为卡通猫图像，颜色块面清晰、轮廓相对简单，相比写实肖像对局部形变更具有容忍度。宽幅特性使得图案在柱面上的弧长需求更大，有利于选用更大的圆柱半径。经参数优化后的方案为：
+
+\[
+R = 50.0\ \text{mm},\quad D = 280\ \text{mm},\quad H = 350\ \text{mm}.
+\]
+
+圆柱物理高度取 $H_c = 86\ \text{mm}$，镜面图像有效高度区间为
+
+\[
+z \in [2,\ 80.9]\ \text{mm}.
+\]
+
+镜面半张角取
+
+\[
+\Delta\theta = 85.0^\circ,\quad \theta \in [5^\circ,\ 175^\circ].
+\]
+
+镜面参数域离散为 $300 \times 163$ 个采样点（匹配图案宽高比 $A_r \approx 1.83$）。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.75\textwidth]{cat_annotated_paper.png}
+\caption{卡通猫案例的纸面畸变图案（带标注）}
+\label{fig:cat_q1}
+\end{figure}
+
+该案例的纸面投影范围约为
+
+\[
+x \in [-109.5,\ 109.5]\ \text{mm},\quad y \in [-99.5,\ 99.5]\ \text{mm},
+\]
+
+纸面图案尺寸约 $219 \times 199\ \text{mm}$，完全落入A4幅面范围，覆盖率为 $44.2\%$。圆柱半径 $R=50\ \text{mm}$ 比肖像方案增大 $43\%$，成像分辨率更高。圆柱轴线位于A4纸面中心 $(148.5,\ 85)\ \text{mm}$。
+
+\subsection{问题一小结}
+
+本节基于逆向光线追迹原理，构建了圆柱镜反射的参数优化模型，求解了蒙娜丽莎与卡通猫两幅参考图案对应的纸面图案及圆柱参数。优化所得参数汇总如下：
+
+\begin{table}[htbp]
+\centering
+\caption{不同类型图像的优化参数汇总}
+\label{tab:q1_results}
+\begin{tabular}{lccccc}
+\toprule
+图像类型及纵横比 & $R\ (\text{mm})$ & $H_c\ (\text{mm})$ & $\Delta\theta\ (^\circ)$ & $D\ (\text{mm})$ & $H\ (\text{mm})$ \\
+\midrule
+蒙娜丽莎 ($0.67$) & 35.0 & 90.0 & 90.0 & 250 & 350 \\
+卡通猫 ($1.83$)   & 50.0 & 86.0 & 85.0 & 280 & 350 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+两组案例的纸面投影均完全落入A4幅面范围。蒙娜丽莎因宽高比接近 $1$，采用半张角 $90^\circ$ 覆盖整个前半柱面，充分展开面部细节；卡通猫为宽幅扁平图案，采用半张角 $85^\circ$ 配合更大半径，在保证完整成像的同时获得更高分辨率。正向重建验证表明，两组纸面图案均能在圆柱镜中恢复为目标镜面图案，说明本文模型可用于实际的柱面反射变形艺术设计。
+
+\end{document}
